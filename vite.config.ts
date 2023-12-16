@@ -13,7 +13,7 @@ export default defineConfig({
 	build: {
 		lib: {
 			entry: path.resolve(__dirname, 'src/components/index.ts'),
-			name: '@uniclass-chat',
+			name: 'UniclassChat',
 			fileName: 'uniclass-chat'
 		},
 		rollupOptions: {
