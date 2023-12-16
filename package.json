@@ -3,6 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "files": ["dist"],
+  "main": "dist/uniclass-chat-umd.cjs",
+  "module": "dist/uniclass-chat.js",
+  "exports": {
+    ".": {
+      "import": "./dist/uniclass-chat.js",
+      "require": "./dist/uniclass-chat-umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -52,6 +61,7 @@
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.6.4",
     "vite-tsconfig-paths": "^4.2.2"
   }
 }
