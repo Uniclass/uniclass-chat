@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FC, useEffect, useId } from 'react'
+import { FC, useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { ComponentMessage } from '../component-message'
@@ -19,18 +19,18 @@ const formSchema = z.object({
 
 type ChatRoomProps = {
 	roomId: string
-	userProfile: {
-		course_name: string
-		teacher_name: string
-		student_id: string
-	}
+	userId: string
 	dataBaseApiUrl: string
 	authToken: string
+	currentRoom: ChatRoom
+	socketStatus: boolean
 }
 
-export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId, userProfile }) => {
+export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId, userId, currentRoom, socketStatus }) => {
+	const [myProfile, setMyProfile] = useState<RoomAttendan>()
+	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
 	const id = useId()
-	const { rooms, sendMessage, fetchChatMessage } = useChatStore()
+	const { rooms, profile, sendMessage, fetchChatMessage, fetchUserProfile } = useChatStore()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -43,52 +43,92 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 
 	useEffect(() => {
 		if (roomId) {
-			fetchChatMessage(dataBaseApiUrl, authToken, roomId)
+			const ts_st = new Date().toISOString()
+			const ts_en = '2023-12-20T09:32:13.000Z'
+			fetchChatMessage(dataBaseApiUrl, authToken, roomId, ts_st, ts_en)
+			fetchUserProfile(dataBaseApiUrl, authToken, roomId)
 		}
-	}, [fetchChatMessage, roomId, dataBaseApiUrl, authToken])
+	}, [fetchChatMessage, fetchUserProfile, roomId, dataBaseApiUrl, authToken])
+
+	useEffect(() => {
+		if (profile.length > 1) {
+			const teacher_id = profile[0].teacher_id
+
+			if (userId === teacher_id) {
+				setMyProfile(profile[0])
+				setOpponentMyProfile(profile[1])
+			} else {
+				setMyProfile(profile[1])
+				setOpponentMyProfile(profile[0])
+			}
+		}
+	}, [profile, userId])
 
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
-		const msgData: ChatMessage = {
-			course_id: roomId,
-			content: values.message,
-			sender_id: userProfile.student_id,
-			sender_type: 'STD',
-			type: 'MSG'
+		// if userId === teacher_id then sender_id === teacher otherwise sender_id === student
+		const teacher_id = profile[0].teacher_id
+
+		if (userId === teacher_id) {
+			const msgData: ChatMessage = {
+				room_id: roomId,
+				content: values.message,
+				sender_id: teacher_id,
+				sender_type: 'TCA',
+				type: 'MSG'
+			}
+			sendMessage(dataBaseApiUrl, authToken, msgData, roomId)
 		}
-		sendMessage(dataBaseApiUrl, authToken, msgData)
+
+		if (userId !== teacher_id) {
+			const msgData: ChatMessage = {
+				room_id: roomId,
+				content: values.message,
+				sender_id: userId,
+				sender_type: 'STD',
+				type: 'MSG'
+			}
+			sendMessage(dataBaseApiUrl, authToken, msgData, roomId)
+		}
+
 		form.reset()
+	}
+
+	const getProfile = (userId: string) => {
+		const profile = opponentProfile?.teacher_id === userId || opponentProfile?.student_id === userId ? opponentProfile : myProfile
+		return profile
 	}
 
 	return (
 		<Card className="rounded-none" key={roomId}>
 			<CardHeader className="flex items-center border-b-[1px]">
-				<CardTitle>{userProfile.course_name}</CardTitle>
-				<CardDescription>{userProfile.teacher_name}</CardDescription>
+				<CardTitle className="max-w-[70%] text-center">
+					{currentRoom.room_name} ({currentRoom.room_id})
+				</CardTitle>
+				<CardDescription>
+					{profile[0]?.firstname} {profile[0]?.lastname}
+				</CardDescription>
 			</CardHeader>
 			<CardContent className="p-0">
-				<ScrollArea className="h-[80svh] w-full rounded-md mt-4 p-4">
+				<ScrollArea className="min-h-[400px] min-w-[600px] w-full rounded-md mt-4 p-4">
 					{messages.map((message: ChatMessage) => (
-						<div key={id + message.content} className={cn('flex justify-start gap-2 my-2', message.sender_id === userProfile.student_id ? 'flex-row-reverse' : 'flex-row')}>
+						<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
 							{message.type === 'COMP' && (
 								<div className="flex flex-row items-end gap-2">
 									<Avatar>
-										<AvatarImage src={message.sender_id === userProfile.student_id ? 'https://avatars.githubusercontent.com/u/62476230?s=96&v=4' : undefined} />
-										<AvatarFallback>ร</AvatarFallback>
+										<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+										<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
 									</Avatar>
 									<ComponentMessage {...message} />
 								</div>
 							)}
 							{message.type === 'MSG' && (
-								<div className={cn('flex flex-row items-end gap-2', message.sender_id === userProfile.student_id ? 'flex-row-reverse' : 'flex-row')}>
+								<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
 									<Avatar>
-										<AvatarImage src={message.sender_id === userProfile.student_id ? 'https://avatars.githubusercontent.com/u/62476230?s=96&v=4' : undefined} />
-										<AvatarFallback>ร</AvatarFallback>
+										<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+										<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
 									</Avatar>
 									<div
-										className={cn(
-											'flex flex-col  text-black p-2 px-4 rounded-t-full',
-											message.sender_id === userProfile.student_id ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100'
-										)}
+										className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full', message.sender_id === userId ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100')}
 									>
 										<p>{message.content}</p>
 									</div>
@@ -110,8 +150,8 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 									{/* <FormLabel>Username</FormLabel> */}
 									<FormControl>
 										<div className="flex flex-row gap-1">
-											<Input placeholder="Aa" {...field} />
-											<Button type="submit" variant="outline">
+											<Input disabled={socketStatus} placeholder="Aa" {...field} />
+											<Button disabled={!socketStatus} type="submit" variant="outline">
 												Send
 											</Button>
 										</div>
