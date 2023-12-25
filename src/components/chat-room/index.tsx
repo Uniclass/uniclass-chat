@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { FC, useEffect, useId, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { ComponentMessage } from '../component-message'
@@ -29,7 +29,6 @@ type ChatRoomProps = {
 export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId, userId, currentRoom, socketStatus }) => {
 	const [myProfile, setMyProfile] = useState<RoomAttendan>()
 	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
-	const id = useId()
 	const { rooms, profile, sendMessage, fetchChatMessage, fetchUserProfile } = useChatStore()
 
 	const form = useForm<z.infer<typeof formSchema>>({

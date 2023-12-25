@@ -1,12 +1,12 @@
+import { fetchUserProfileList } from '@/common/api/chat'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import useBrowserRestriction from '@/hooks/use-browser-restriction '
+import { cn } from '@/lib/utils'
 import { useChatRoomStore } from '@/store/use-chat-room-store'
 import { useChatStore } from '@/store/use-chat-store'
 import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
 import { Badge } from '../ui/badge'
-import { cn } from '@/lib/utils'
-import { fetchUserProfile, fetchUserProfileList } from '@/common/api/chat'
 
 type ChatAppProps = {
 	socketApiUrl: string
