@@ -1,21 +1,24 @@
-import { fetchChatMessage, sendChatMessage } from '@/common/api/chat'
+import { fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList } from '@/common/api/chat'
 import create from 'zustand'
 
 type StoreState = {
 	rooms: Record<string, ChatMessage[]>
+	profile: RoomAttendan[]
 	socket: WebSocket | null
 	socketStatus: boolean
 }
 
 type StoreActions = {
-	connectWebSocket: (socketApiUrl: string) => void
+	connectWebSocket: (dataBaseApiUrl: string, socketApiUrl: string, authToken: string) => void
 	disconnectWebSocket: () => void
-	sendMessage: (dataBaseApiUrl: string, authToken: string, msgData: ChatMessage) => void
-	fetchChatMessage: (dataBaseApiUrl: string, authToken: string, course_id: string) => void
+	sendMessage: (dataBaseApiUrl: string, authToken: string, data: ChatMessage, room_id: string) => void
+	fetchChatMessage: (dataBaseApiUrl: string, authToken: string, room_id: string, ts_st: string, ts_en: string) => void
+	fetchUserProfile: (dataBaseApiUrl: string, authToken: string, room_Id: string) => void
 }
 
 const initialState = {
 	rooms: {},
+	profile: [],
 	socket: null,
 	socketStatus: false
 }
@@ -24,13 +27,15 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	...initialState,
 
 	// Connect to WebSocket
-	connectWebSocket: (socketApiUrl) => {
+	connectWebSocket: async (dataBaseApiUrl, socketApiUrl, authToken) => {
 		const { socketStatus } = get()
 
 		// If the WebSocket is already connected, return without doing anything
 		if (socketStatus) return
 
-		const socket = new WebSocket(socketApiUrl)
+		const oneTimeAuthToken = await getAuthToken(dataBaseApiUrl, authToken)
+
+		const socket = new WebSocket(socketApiUrl + '?token=' + oneTimeAuthToken)
 
 		socket.onopen = () => {
 			set({ socket, socketStatus: true })
@@ -39,14 +44,12 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 		socket.onmessage = (event) => {
 			// Handle incoming messages
 			const message = JSON.parse(event.data)
-			const { course_id } = message.msgData
-
-			console.log(message)
+			const { room_id } = message
 
 			set((state) => ({
 				rooms: {
 					...state.rooms,
-					[course_id]: [...(state.rooms[course_id] || []), message.msgData]
+					[room_id]: [...(state.rooms[room_id] || []), message]
 				}
 			}))
 		}
@@ -71,12 +74,12 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	},
 
 	// Send a message through WebSocket and API
-	sendMessage: async (dataBaseApiUrl, authToken, msgData) => {
+	sendMessage: async (dataBaseApiUrl, authToken, data, room_id) => {
 		const { socket } = useChatStore.getState()
 		if (socket && socket.readyState === WebSocket.OPEN) {
 			try {
-				await sendChatMessage(dataBaseApiUrl, authToken, msgData)
-				socket.send(JSON.stringify({ action: 'sendMessage', msgData }))
+				await sendChatMessage(dataBaseApiUrl, authToken, data, room_id)
+				socket.send(JSON.stringify({ action: 'sendmessage', data }))
 			} catch (err) {
 				console.log(err)
 			}
@@ -84,16 +87,39 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	},
 
 	// Fetch chat messages from API
-	fetchChatMessage: async (dataBaseApiUrl, authToken, course_id) => {
+	fetchChatMessage: async (dataBaseApiUrl, authToken, room_id, ts_st, ts_en) => {
 		try {
-			const message = (await fetchChatMessage(dataBaseApiUrl, authToken, course_id)) as ChatMessage[]
+			const message = (await fetchChatMessage(dataBaseApiUrl, authToken, room_id, ts_st, ts_en)) as ChatMessage[]
 
-			set((state) => ({
-				rooms: {
-					...state.rooms,
-					[course_id]: [...(state.rooms[course_id] || []), ...message]
+			set((state) => {
+				const existingMessages = state.rooms[room_id] || []
+				const newMessages = [...existingMessages, ...message]
+
+				const uniqueMessages = newMessages.reduce((acc: ChatMessage[], current: ChatMessage) => {
+					const index = acc.findIndex((msg) => msg.id === current.id) // Assuming each message has a unique 'id' property
+					if (index < 0) {
+						acc.push(current)
+					}
+					return acc
+				}, [])
+
+				return {
+					rooms: {
+						...state.rooms,
+						[room_id]: uniqueMessages
+					}
 				}
-			}))
+			})
+		} catch (err) {
+			console.log(err)
+		}
+	},
+
+	// Fetch User Profile From API
+	fetchUserProfile: async (dataBaseApiUrl, authToken, room_Id) => {
+		try {
+			const profile = await fetchUserProfileList(dataBaseApiUrl, authToken, room_Id)
+			set({ profile })
 		} catch (err) {
 			console.log(err)
 		}
