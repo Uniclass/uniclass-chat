@@ -56,7 +56,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
 	return isAllowed ? (
-		<div className="max-w-[1440px] mx-auto m-10">
+		<div className="w-full mx-auto m-10">
 			<div className="flex flex-row relative">
 				<Badge className="absolute top-4 right-4" variant="outline">
 					Socket {socketStatus ? <span className="w-[5px] h-[5px] bg-green-400 ml-2"></span> : <span className="w-[5px] h-[5px] bg-red-400 ml-2"></span>}

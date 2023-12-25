@@ -108,7 +108,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="p-0">
-				<ScrollArea className="min-h-[400px] min-w-[600px] w-full rounded-md mt-4 p-4">
+				<ScrollArea className="min-h-[400px] min-w-[700px] w-full rounded-md mt-4 p-4">
 					{messages.map((message: ChatMessage) => (
 						<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
 							{message.type === 'COMP' && (
