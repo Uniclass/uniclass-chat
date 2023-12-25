@@ -6,29 +6,44 @@ import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
 import { Badge } from '../ui/badge'
 import { cn } from '@/lib/utils'
+import { fetchUserProfile, fetchUserProfileList } from '@/common/api/chat'
 
 type ChatAppProps = {
 	socketApiUrl: string
 	dataBaseApiUrl: string
 	authToken: string
+	userId: string
 }
 
-export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authToken }) => {
+export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authToken, userId }) => {
 	const [selectedTab, setSelectedTab] = useState(0)
+	const [userProfiles, setUserProfiles] = useState<any[]>([])
 	const { connectWebSocket, socketStatus, disconnectWebSocket } = useChatStore()
 	const { fetchChatRoom, chatRoom } = useChatRoomStore()
 
 	const isAllowed = useBrowserRestriction()
 
 	useEffect(() => {
-		connectWebSocket(socketApiUrl)
+		const fetchProfiles = async () => {
+			const profiles = await Promise.all(chatRoom.map((room) => fetchUserProfileList(dataBaseApiUrl, authToken, room.room_id)))
+			const filteredTeacher = profiles.flat().filter((item) => item.teacher_id)
+			setUserProfiles(filteredTeacher)
+		}
+
+		if (chatRoom && chatRoom.length > 0) {
+			fetchProfiles()
+		}
+	}, [chatRoom, dataBaseApiUrl, authToken])
+
+	useEffect(() => {
+		connectWebSocket(dataBaseApiUrl, socketApiUrl, authToken)
 		fetchChatRoom(dataBaseApiUrl, authToken)
 
 		function handleVisibilityChange() {
 			if (document.visibilityState === 'hidden') {
 				disconnectWebSocket()
 			} else {
-				connectWebSocket(socketApiUrl)
+				connectWebSocket(dataBaseApiUrl, socketApiUrl, authToken)
 				fetchChatRoom(dataBaseApiUrl, authToken)
 			}
 		}
@@ -38,7 +53,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange)
 		}
-	}, [connectWebSocket, disconnectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken])
+	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
 	return isAllowed ? (
 		<div className="max-w-[1440px] mx-auto m-10">
@@ -48,33 +63,33 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 				</Badge>
 				<div className="flex flex-col border-y border-l ">
 					{chatRoom &&
-						chatRoom.map((room: ChatMessage, index: number) => (
-							<button
-								key={room.id}
-								className={cn('px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
-								onClick={() => setSelectedTab(index)}
-							>
-								<Avatar>
-									<AvatarImage src={''} />
-									<AvatarFallback>{'TC'}</AvatarFallback>
-								</Avatar>
-								<div className="flex flex-col items-start">
-									<p className="truncate max-w-[200px]">{room.course_id}</p>
-									<p className="text-sm">{'TCA0002'}</p>
-								</div>
-							</button>
-						))}
+						chatRoom.map((room: ChatRoom, index: number) => {
+							return (
+								<button
+									key={room.id}
+									className={cn('min-w-[300px] px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
+									onClick={() => setSelectedTab(index)}
+								>
+									<Avatar>
+										<AvatarImage src={userProfiles[index]?.photo_url} />
+										<AvatarFallback>{userProfiles[index]?.firstname}</AvatarFallback>
+									</Avatar>
+									<div className="flex flex-col items-start">
+										<p className="truncate max-w-[200px]">
+											{room.room_name} ({room.room_id})
+										</p>
+										<p className="text-sm">
+											{userProfiles[index]?.firstname} {userProfiles[index]?.lastname}
+										</p>
+									</div>
+								</button>
+							)
+						})}
 				</div>
 				{chatRoom &&
-					chatRoom.map((room: ChatMessage, index: number) => (
+					chatRoom.map((room: ChatRoom, index: number) => (
 						<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
-							{/* Your card content here */}
-							<ChatRoom
-								dataBaseApiUrl={dataBaseApiUrl}
-								authToken={authToken}
-								roomId={room.course_id}
-								userProfile={{ course_name: room.course_id, teacher_name: 'TCA0002', student_id: 'STD0012' }}
-							/>
+							<ChatRoom dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} currentRoom={room} roomId={room.room_id} userId={userId} socketStatus={socketStatus} />
 						</div>
 					))}
 			</div>
