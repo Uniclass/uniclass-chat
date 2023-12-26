@@ -60,10 +60,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 
 	return isAllowed ? (
 		<div className="w-full mx-auto m-10">
-			<div className="flex flex-row relative">
-				<Badge className="absolute top-4 right-4" variant="outline">
-					Socket {socketStatus ? <span className="w-[5px] h-[5px] bg-green-400 ml-2"></span> : <span className="w-[5px] h-[5px] bg-red-400 ml-2"></span>}
-				</Badge>
+			<div className="flex flex-row">
 				<div className="flex flex-col border-y border-l ">
 					{chatRoom &&
 						chatRoom.map((room: ChatRoom, index: number) => {
@@ -93,7 +90,6 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 					chatRoom.map((room: ChatRoom, index: number) => (
 						<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
 							<ChatRoom dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} currentRoom={room} roomId={room.room_id} userId={userId} socketStatus={socketStatus} />
-							<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} />
 						</div>
 					))}
 			</div>

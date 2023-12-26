@@ -9,7 +9,7 @@ type TeacherDetailProps = {
 
 export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 	return (
-		<Card className="rounded-none">
+		<Card className="rounded-none min-w-[400px]">
 			<CardContent className="p-3">
 				{/* TEACHER PHOTO URL */}
 				<div className="relative">

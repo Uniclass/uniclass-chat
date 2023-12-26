@@ -1,9 +1,11 @@
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconMenuDeep, IconMessages } from '@tabler/icons-react'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { ChatRoomDetail } from '../chat-room-detail'
 import { ComponentMessage } from '../component-message'
 import { NotificationMessage } from '../server-noti-message'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -30,6 +32,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 	const [myProfile, setMyProfile] = useState<RoomAttendan>()
 	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
 	const { rooms, profile, sendMessage, fetchChatMessage, fetchUserProfile } = useChatStore()
+	const [sideMenuOpen, setSideMenuOpen] = useState(true)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -98,71 +101,78 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 	}
 
 	return (
-		<Card className="rounded-none" key={roomId}>
-			<CardHeader className="flex items-center border-b-[1px]">
-				<CardTitle className="max-w-[70%] text-center">
-					{currentRoom.room_name} ({currentRoom.room_id})
-				</CardTitle>
-				<CardDescription>
-					{profile[0]?.firstname} {profile[0]?.lastname}
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="p-0">
-				<ScrollArea className="min-h-[400px] min-w-[700px] w-full rounded-md mt-4 p-4">
-					{messages.map((message: ChatMessage) => (
-						<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
-							{message.type === 'COMP' && (
-								<div className="flex flex-row items-end gap-2">
-									<Avatar>
-										<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-										<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-									</Avatar>
-									<ComponentMessage {...message} />
-								</div>
-							)}
-							{message.type === 'MSG' && (
-								<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
-									<Avatar>
-										<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-										<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-									</Avatar>
-									<div
-										className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full', message.sender_id === userId ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100')}
-									>
-										<p>{message.content}</p>
+		<div className="flex flex-row relative">
+			<Card className="rounded-none" key={roomId}>
+				<CardHeader className="flex items-center border-b-[1px]">
+					<CardTitle className="max-w-[70%] text-center">
+						{currentRoom.room_name} ({currentRoom.room_id})
+					</CardTitle>
+					<CardDescription>
+						{profile[0]?.firstname} {profile[0]?.lastname}
+					</CardDescription>
+				</CardHeader>
+				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(true)} />
+				<CardContent className="p-0">
+					<ScrollArea className="min-h-[400px] min-w-[700px] w-full rounded-md mt-4 p-4">
+						{messages.map((message: ChatMessage) => (
+							<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
+								{message.type === 'COMP' && (
+									<div className="flex flex-row items-end gap-2">
+										<Avatar>
+											<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+											<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
+										</Avatar>
+										<ComponentMessage {...message} />
 									</div>
-								</div>
-							)}
-							{message.type === 'NOTI' && <NotificationMessage {...message} />}
-						</div>
-					))}
-				</ScrollArea>
-			</CardContent>
-			<CardFooter className="p-4">
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-						<FormField
-							control={form.control}
-							name="message"
-							render={({ field }) => (
-								<FormItem>
-									{/* <FormLabel>Username</FormLabel> */}
-									<FormControl>
-										<div className="flex flex-row gap-1">
-											<Input disabled={!socketStatus} placeholder="Aa" {...field} />
-											<Button disabled={!socketStatus} type="submit" variant="outline">
-												Send
-											</Button>
+								)}
+								{message.type === 'MSG' && (
+									<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
+										<Avatar>
+											<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+											<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
+										</Avatar>
+										<div
+											className={cn(
+												'flex flex-col  text-black p-2 px-4 rounded-t-full',
+												message.sender_id === userId ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100'
+											)}
+										>
+											<p>{message.content}</p>
 										</div>
-									</FormControl>
-									{/* <FormDescription>Test Websocket</FormDescription> */}
-									<FormMessage className="text-red-400" />
-								</FormItem>
-							)}
-						/>
-					</form>
-				</Form>
-			</CardFooter>
-		</Card>
+									</div>
+								)}
+								{message.type === 'NOTI' && <NotificationMessage {...message} />}
+							</div>
+						))}
+					</ScrollArea>
+				</CardContent>
+				<CardFooter className="p-4">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+							<FormField
+								control={form.control}
+								name="message"
+								render={({ field }) => (
+									<FormItem>
+										{/* <FormLabel>Username</FormLabel> */}
+										<FormControl>
+											<div className="flex flex-row gap-1">
+												<Input disabled={!socketStatus} placeholder="Aa" {...field} />
+												<Button disabled={!socketStatus} type="submit" variant="outline">
+													Send
+												</Button>
+											</div>
+										</FormControl>
+										{/* <FormDescription>Test Websocket</FormDescription> */}
+										<FormMessage className="text-red-400" />
+									</FormItem>
+								)}
+							/>
+						</form>
+					</Form>
+				</CardFooter>
+			</Card>
+			<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={roomId} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
+		</div>
 	)
 }
