@@ -149,7 +149,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 									{/* <FormLabel>Username</FormLabel> */}
 									<FormControl>
 										<div className="flex flex-row gap-1">
-											<Input disabled={socketStatus} placeholder="Aa" {...field} />
+											<Input disabled={!socketStatus} placeholder="Aa" {...field} />
 											<Button disabled={!socketStatus} type="submit" variant="outline">
 												Send
 											</Button>

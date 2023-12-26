@@ -7,6 +7,9 @@ import { useChatStore } from '@/store/use-chat-store'
 import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
 import { Badge } from '../ui/badge'
+import { ChatRoomDetail } from '../chat-room-detail'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerFooter } from '@/components/ui/drawer'
+import { Button } from '../ui/button'
 
 type ChatAppProps = {
 	socketApiUrl: string
@@ -90,6 +93,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 					chatRoom.map((room: ChatRoom, index: number) => (
 						<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
 							<ChatRoom dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} currentRoom={room} roomId={room.room_id} userId={userId} socketStatus={socketStatus} />
+							<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} />
 						</div>
 					))}
 			</div>

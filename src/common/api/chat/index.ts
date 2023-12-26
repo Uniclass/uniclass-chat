@@ -78,4 +78,17 @@ const fetchUserProfile = (dataBaseApiUrl: string, authToken: string, user_id: st
 		})
 }
 
-export { fetchChatRoom, fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList, fetchUserProfile }
+const fetchChatRoomDetail = (dataBaseApiUrl: string, authToken: string, room_id: string) => {
+	return axios
+		.get(`${dataBaseApiUrl}/chat/room/${room_id}`, {
+			headers: {
+				Authorization: `Bearer ${authToken}`
+			}
+		})
+		.then((res) => {
+			if (res.data.code === 200) return res.data.payload
+			throw new Error(res.data.message_ui || res.data.message)
+		})
+}
+
+export { fetchChatRoom, fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList, fetchUserProfile, fetchChatRoomDetail }
