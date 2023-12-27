@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
+import { IconPhoneCall } from '@tabler/icons-react'
+import { FC } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
 import { Card, CardContent } from '../../ui/card'
-import { IconPhoneCall } from '@tabler/icons-react'
 
 type TeacherDetailProps = {
 	teacher: ChatRoomDetail['teacher']

@@ -12,7 +12,7 @@ export const CourseDetail: FC<CourseDetailProps> = ({ order: { course_id, course
 		<Card className="relative rounded-none w-full">
 			<CardContent className="p-3">
 				{/* COURSE ID */}
-				<h2 className="font-bold">{course_id}</h2>
+				<p className="text-lg font-bold">{course_id}</p>
 				{/* COURSE NAME */}
 				<div>{course_name}</div>
 			</CardContent>

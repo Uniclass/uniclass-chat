@@ -1,11 +1,10 @@
 import { fetchUserProfileList } from '@/common/api/chat'
-import useBrowserRestriction from '@/hooks/use-browser-restriction '
 import { useChatRoomStore } from '@/store/use-chat-room-store'
 import { useChatStore } from '@/store/use-chat-store'
 import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
-import { ChatRoomMenu } from '../chat-room-menu'
 import { ChatRoomDetail } from '../chat-room-detail'
+import { ChatRoomMenu } from '../chat-room-menu'
 
 type ChatAppProps = {
 	socketApiUrl: string
@@ -21,8 +20,6 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	const { fetchChatRoom, chatRoom } = useChatRoomStore()
 	const [roomMenuOpen, setRoomMenuOpen] = useState(false)
 	const [sideMenuOpen, setSideMenuOpen] = useState(false)
-
-	const isAllowed = useBrowserRestriction()
 
 	useEffect(() => {
 		const fetchProfiles = async () => {
@@ -56,41 +53,37 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 		}
 	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
-	return isAllowed ? (
-		<div className="w-full mx-auto m-10">
-			<div className="flex flex-row">
-				<ChatRoomMenu
-					roomMenuOpen={roomMenuOpen}
-					setRoomMenuOpen={setRoomMenuOpen}
-					selectedTab={selectedTab}
-					setSelectedTab={setSelectedTab}
-					userProfiles={userProfiles}
-					chatRoom={chatRoom}
-				/>
+	return (
+		<div className="flex flex-row">
+			<ChatRoomMenu
+				roomMenuOpen={roomMenuOpen}
+				setRoomMenuOpen={setRoomMenuOpen}
+				selectedTab={selectedTab}
+				setSelectedTab={setSelectedTab}
+				userProfiles={userProfiles}
+				chatRoom={chatRoom}
+			/>
 
-				{chatRoom &&
-					chatRoom.map((room: ChatRoom, index: number) => (
-						<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
-							<div className="flex flex-row">
-								<ChatRoom
-									dataBaseApiUrl={dataBaseApiUrl}
-									authToken={authToken}
-									currentRoom={room}
-									roomId={room.room_id}
-									userId={userId}
-									socketStatus={socketStatus}
-									setRoomMenuOpen={setRoomMenuOpen}
-									roomMenuOpen={roomMenuOpen}
-									sideMenuOpen={sideMenuOpen}
-									setSideMenuOpen={setSideMenuOpen}
-								/>
-								<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
-							</div>
+			{chatRoom &&
+				chatRoom.map((room: ChatRoom, index: number) => (
+					<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
+						<div className="flex flex-row">
+							<ChatRoom
+								dataBaseApiUrl={dataBaseApiUrl}
+								authToken={authToken}
+								currentRoom={room}
+								roomId={room.room_id}
+								userId={userId}
+								socketStatus={socketStatus}
+								setRoomMenuOpen={setRoomMenuOpen}
+								roomMenuOpen={roomMenuOpen}
+								sideMenuOpen={sideMenuOpen}
+								setSideMenuOpen={setSideMenuOpen}
+							/>
+							<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
 						</div>
-					))}
-			</div>
+					</div>
+				))}
 		</div>
-	) : (
-		<h1>Unsupported browser. Please use Chrome, Firefox, Safari, or Edge.</h1>
 	)
 }

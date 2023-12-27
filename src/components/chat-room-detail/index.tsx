@@ -37,7 +37,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authTo
 				leaveTo="opacity-0 -translate-x-10"
 			>
 				<div className="" onClick={() => setSideMenuOpen(false)}>
-					<div className="min-w-[300px] bg-gray-200 h-full" onClick={(e) => e.stopPropagation()}>
+					<div className="min-w-[300px] h-full" onClick={(e) => e.stopPropagation()}>
 						{/* COURSE DETAIL */}
 						<CourseDetail order={chatRoomDetail.order} />
 						{/* COURSE STATUS */}

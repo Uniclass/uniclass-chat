@@ -5,7 +5,6 @@ import { IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
-import { ChatRoomDetail } from '../chat-room-detail'
 import { ComponentMessage } from '../component-message'
 import { NotificationMessage } from '../server-noti-message'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -116,7 +115,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 
 	return (
 		<div className="flex flex-row relative z-10">
-			<Card className="rounded-none" key={roomId}>
+			<Card className="rounded-none w-full" key={roomId}>
 				<CardHeader className="flex items-center border-b-[1px]">
 					<CardTitle className="max-w-[70%] text-center">
 						{currentRoom.room_name} ({currentRoom.room_id})
@@ -128,7 +127,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 				<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
 				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
 				<CardContent className="p-0">
-					<ScrollArea className="min-h-[400px] min-w-[700px] w-full rounded-md mt-4 p-4">
+					<ScrollArea className="h-full w-full rounded-md mt-4 p-4">
 						{messages.map((message: ChatMessage) => (
 							<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
 								{message.type === 'COMP' && (
