@@ -54,7 +54,7 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 	}
 
 	return (
-		<Card className="rounded-none min-w-[400px]">
+		<Card className="rounded-none w-full">
 			{/* ORDER STATUS */}
 			<CardContent className="p-3">
 				<div className="flex flex-row gap-3 items-center">

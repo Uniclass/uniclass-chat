@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconMenuDeep, IconMessages } from '@tabler/icons-react'
+import { IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
 import { FC, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -26,13 +26,27 @@ type ChatRoomProps = {
 	authToken: string
 	currentRoom: ChatRoom
 	socketStatus: boolean
+	roomMenuOpen: boolean
+	setRoomMenuOpen: (bool: boolean) => void
+	sideMenuOpen: boolean
+	setSideMenuOpen: (bool: boolean) => void
 }
 
-export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId, userId, currentRoom, socketStatus }) => {
+export const ChatRoom: FC<ChatRoomProps> = ({
+	authToken,
+	dataBaseApiUrl,
+	roomId,
+	userId,
+	currentRoom,
+	socketStatus,
+	roomMenuOpen,
+	setRoomMenuOpen,
+	sideMenuOpen,
+	setSideMenuOpen
+}) => {
 	const [myProfile, setMyProfile] = useState<RoomAttendan>()
 	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
 	const { rooms, profile, sendMessage, fetchChatMessage, fetchUserProfile } = useChatStore()
-	const [sideMenuOpen, setSideMenuOpen] = useState(true)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -101,7 +115,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 	}
 
 	return (
-		<div className="flex flex-row relative">
+		<div className="flex flex-row relative z-10">
 			<Card className="rounded-none" key={roomId}>
 				<CardHeader className="flex items-center border-b-[1px]">
 					<CardTitle className="max-w-[70%] text-center">
@@ -111,7 +125,8 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 						{profile[0]?.firstname} {profile[0]?.lastname}
 					</CardDescription>
 				</CardHeader>
-				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(true)} />
+				<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
+				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
 				<CardContent className="p-0">
 					<ScrollArea className="min-h-[400px] min-w-[700px] w-full rounded-md mt-4 p-4">
 						{messages.map((message: ChatMessage) => (
@@ -172,7 +187,6 @@ export const ChatRoom: FC<ChatRoomProps> = ({ authToken, dataBaseApiUrl, roomId,
 					</Form>
 				</CardFooter>
 			</Card>
-			<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={roomId} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
 		</div>
 	)
 }

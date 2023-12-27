@@ -18,7 +18,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authTo
 
 	useEffect(() => {
 		if (roomId) {
-			fetchChatRoomDetail(dataBaseApiUrl, authToken, roomId).then((res) => {
+			fetchChatRoomDetail(dataBaseApiUrl, authToken, roomId).then((res: ChatRoomDetail) => {
 				setChatRoomDetail(res)
 			})
 		}
@@ -30,14 +30,14 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authTo
 				show={sideMenuOpen}
 				as={Fragment}
 				enter="transition ease-out duration-200"
-				enterFrom="opacity-0 translate-x-10"
+				enterFrom="opacity-0 -translate-x-10"
 				enterTo="opacity-100 translate-x-0"
 				leave="transition ease-in duration-150"
 				leaveFrom="opacity-100 translate-x-0"
-				leaveTo="opacity-0 translate-x-10"
+				leaveTo="opacity-0 -translate-x-10"
 			>
-				<div className="absolute top-0 left-0 right-0 bottom-0" onClick={() => setSideMenuOpen(false)}>
-					<div className="absolute top-0 right-0 bottom-0 max-w-[400px] bg-gray-200" onClick={(e) => e.stopPropagation()}>
+				<div className="" onClick={() => setSideMenuOpen(false)}>
+					<div className="min-w-[300px] bg-gray-200 h-full" onClick={(e) => e.stopPropagation()}>
 						{/* COURSE DETAIL */}
 						<CourseDetail order={chatRoomDetail.order} />
 						{/* COURSE STATUS */}

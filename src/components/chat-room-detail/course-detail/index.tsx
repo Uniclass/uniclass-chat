@@ -9,7 +9,7 @@ type CourseDetailProps = {
 
 export const CourseDetail: FC<CourseDetailProps> = ({ order: { course_id, course_name } }) => {
 	return (
-		<Card className="relative rounded-none min-w-[400px]">
+		<Card className="relative rounded-none w-full">
 			<CardContent className="p-3">
 				{/* COURSE ID */}
 				<h2 className="font-bold">{course_id}</h2>

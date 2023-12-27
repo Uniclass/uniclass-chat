@@ -1,15 +1,11 @@
 import { fetchUserProfileList } from '@/common/api/chat'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import useBrowserRestriction from '@/hooks/use-browser-restriction '
-import { cn } from '@/lib/utils'
 import { useChatRoomStore } from '@/store/use-chat-room-store'
 import { useChatStore } from '@/store/use-chat-store'
 import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
-import { Badge } from '../ui/badge'
+import { ChatRoomMenu } from '../chat-room-menu'
 import { ChatRoomDetail } from '../chat-room-detail'
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerFooter } from '@/components/ui/drawer'
-import { Button } from '../ui/button'
 
 type ChatAppProps = {
 	socketApiUrl: string
@@ -23,13 +19,15 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	const [userProfiles, setUserProfiles] = useState<any[]>([])
 	const { connectWebSocket, socketStatus, disconnectWebSocket } = useChatStore()
 	const { fetchChatRoom, chatRoom } = useChatRoomStore()
+	const [roomMenuOpen, setRoomMenuOpen] = useState(false)
+	const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
 	const isAllowed = useBrowserRestriction()
 
 	useEffect(() => {
 		const fetchProfiles = async () => {
 			const profiles = await Promise.all(chatRoom.map((room) => fetchUserProfileList(dataBaseApiUrl, authToken, room.room_id)))
-			const filteredTeacher = profiles.flat().filter((item) => item.teacher_id)
+			const filteredTeacher = profiles.flat().filter((item: any) => item.teacher_id)
 			setUserProfiles(filteredTeacher)
 		}
 
@@ -61,35 +59,33 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	return isAllowed ? (
 		<div className="w-full mx-auto m-10">
 			<div className="flex flex-row">
-				<div className="flex flex-col border-y border-l ">
-					{chatRoom &&
-						chatRoom.map((room: ChatRoom, index: number) => {
-							return (
-								<button
-									key={room.id}
-									className={cn('min-w-[300px] px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
-									onClick={() => setSelectedTab(index)}
-								>
-									<Avatar>
-										<AvatarImage src={userProfiles[index]?.photo_url} />
-										<AvatarFallback>{userProfiles[index]?.firstname}</AvatarFallback>
-									</Avatar>
-									<div className="flex flex-col items-start">
-										<p className="truncate max-w-[200px]">
-											{room.room_name} ({room.room_id})
-										</p>
-										<p className="text-sm">
-											{userProfiles[index]?.firstname} {userProfiles[index]?.lastname}
-										</p>
-									</div>
-								</button>
-							)
-						})}
-				</div>
+				<ChatRoomMenu
+					roomMenuOpen={roomMenuOpen}
+					setRoomMenuOpen={setRoomMenuOpen}
+					selectedTab={selectedTab}
+					setSelectedTab={setSelectedTab}
+					userProfiles={userProfiles}
+					chatRoom={chatRoom}
+				/>
+
 				{chatRoom &&
 					chatRoom.map((room: ChatRoom, index: number) => (
 						<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
-							<ChatRoom dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} currentRoom={room} roomId={room.room_id} userId={userId} socketStatus={socketStatus} />
+							<div className="flex flex-row">
+								<ChatRoom
+									dataBaseApiUrl={dataBaseApiUrl}
+									authToken={authToken}
+									currentRoom={room}
+									roomId={room.room_id}
+									userId={userId}
+									socketStatus={socketStatus}
+									setRoomMenuOpen={setRoomMenuOpen}
+									roomMenuOpen={roomMenuOpen}
+									sideMenuOpen={sideMenuOpen}
+									setSideMenuOpen={setSideMenuOpen}
+								/>
+								<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
+							</div>
 						</div>
 					))}
 			</div>
