@@ -6,6 +6,7 @@ type StoreState = {
 	profile: RoomAttendan[]
 	socket: WebSocket | null
 	socketStatus: boolean
+	sending: boolean
 }
 
 type StoreActions = {
@@ -20,7 +21,8 @@ const initialState = {
 	rooms: {},
 	profile: [],
 	socket: null,
-	socketStatus: false
+	socketStatus: false,
+	sending: false
 }
 
 export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
@@ -78,10 +80,14 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 		const { socket } = useChatStore.getState()
 		if (socket && socket.readyState === WebSocket.OPEN) {
 			try {
+				// set loading state
+				set(() => ({ sending: true }))
 				await sendChatMessage(dataBaseApiUrl, authToken, data, room_id)
 				socket.send(JSON.stringify({ action: 'sendmessage', data }))
+				set(() => ({ sending: false }))
 			} catch (err) {
 				console.log(err)
+				set(() => ({ sending: false }))
 			}
 		}
 	},

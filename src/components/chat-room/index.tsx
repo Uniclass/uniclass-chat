@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
+import { Badge } from '../ui/badge'
 
 const formSchema = z.object({
 	message: z.string().min(2).max(50)
@@ -45,7 +46,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 }) => {
 	const [myProfile, setMyProfile] = useState<RoomAttendan>()
 	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
-	const { rooms, profile, sendMessage, fetchChatMessage, fetchUserProfile } = useChatStore()
+	const { rooms, profile, sendMessage, sending, fetchChatMessage, fetchUserProfile } = useChatStore()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -126,6 +127,17 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 				</CardHeader>
 				<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
 				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
+				<Badge variant="outline" className="absolute top-20 right-4">
+					{socketStatus ? (
+						<>
+							Connected <div className="p-[3px] bg-green-400 rounded-full ml-1" />
+						</>
+					) : (
+						<>
+							Disconnected <div className="p-[3px] bg-red-400 rounded-full ml-1" />
+						</>
+					)}
+				</Badge>
 				<CardContent className="p-0">
 					<ScrollArea className="h-full w-full rounded-md mt-4 p-4">
 						{messages.map((message: ChatMessage) => (
@@ -158,6 +170,17 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 								{message.type === 'NOTI' && <NotificationMessage {...message} />}
 							</div>
 						))}
+						{sending && (
+							<div className={cn('flex items-end gap-2 flex-row-reverse')}>
+								<Avatar>
+									<AvatarImage src={getProfile(userId)?.photo_url} />
+									<AvatarFallback>{getProfile(userId)?.firstname}</AvatarFallback>
+								</Avatar>
+								<div className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full rounded-l-full bg-blue-100')}>
+									<p>กำลังส่ง...</p>
+								</div>
+							</div>
+						)}
 					</ScrollArea>
 				</CardContent>
 				<CardFooter className="p-4">
