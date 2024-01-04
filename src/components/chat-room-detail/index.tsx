@@ -4,6 +4,7 @@ import { CourseDetail } from './course-detail'
 import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
 import { Transition } from '@headlessui/react'
+import { ClassSchedule } from './class-schedule'
 
 type ChatRoomDetailProps = {
 	dataBaseApiUrl: string
@@ -42,6 +43,8 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authTo
 						<CourseDetail order={chatRoomDetail.order} teacher={chatRoomDetail.teacher} />
 						{/* COURSE STATUS */}
 						<CourseStatus orderStatus={chatRoomDetail.order.order_status} />
+						{/* CLASS SCHEDULE */}
+						<ClassSchedule order={chatRoomDetail.order} />
 						{/* CLASS DETAIL */}
 						{/* <ClassDetail /> */}
 						{/* TEACHER / STUDENT DETAIL */}
