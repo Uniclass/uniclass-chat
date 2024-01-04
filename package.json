@@ -2,18 +2,7 @@
   "name": "uniclass-chat",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "dist/uniclass-chat-umd.cjs",
-  "module": "dist/uniclass-chat.js",
-  "exports": {
-    ".": {
-      "import": "./dist/uniclass-chat.js",
-      "require": "./dist/uniclass-chat-umd.cjs"
-    }
-  },
+  
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -31,6 +20,7 @@
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
+    "@storybook/builder-vite": "^7.6.7",
     "@tabler/icons-react": "^2.44.0",
     "axios": "^1.6.3",
     "class-variance-authority": "^0.7.0",
@@ -59,6 +49,7 @@
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "chromatic": "^10.2.0",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
@@ -66,7 +57,7 @@
     "postcss": "^8.4.32",
     "storybook": "7.6.5",
     "tailwindcss": "^3.3.6",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.3",
     "vite": "^5.0.8",
     "vite-plugin-dts": "^3.6.4",
     "vite-tsconfig-paths": "^4.2.2"
