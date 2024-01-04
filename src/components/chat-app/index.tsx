@@ -18,8 +18,11 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	const [userProfiles, setUserProfiles] = useState<any[]>([])
 	const { connectWebSocket, socketStatus, disconnectWebSocket } = useChatStore()
 	const { fetchChatRoom, chatRoom } = useChatRoomStore()
-	const [roomMenuOpen, setRoomMenuOpen] = useState(false)
-	const [sideMenuOpen, setSideMenuOpen] = useState(false)
+
+	// if mobile set default to false
+	const isMobile = window.innerWidth <= 768 // Adjust the value as needed
+	const [roomMenuOpen, setRoomMenuOpen] = useState(!isMobile)
+	const [sideMenuOpen, setSideMenuOpen] = useState(!isMobile)
 
 	useEffect(() => {
 		const fetchProfiles = async () => {
@@ -54,7 +57,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
 	return (
-		<div className="flex flex-row">
+		<div className="flex flex-row w-full">
 			<ChatRoomMenu
 				roomMenuOpen={roomMenuOpen}
 				setRoomMenuOpen={setRoomMenuOpen}
@@ -66,7 +69,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 
 			{chatRoom &&
 				chatRoom.map((room: ChatRoom, index: number) => (
-					<div key={room.id} className={`w-full ${selectedTab === index ? 'block' : 'hidden'}`}>
+					<div key={room.id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
 						<div className="flex flex-row">
 							<ChatRoom
 								dataBaseApiUrl={dataBaseApiUrl}

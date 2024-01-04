@@ -30,7 +30,7 @@ export const NotificationMessage: FC<ChatMessage> = ({ comp_type, content }) => 
 
 	return (
 		<div className="flex flex-row justify-center w-full">
-			<Card className={cn('rounded-2xl flex items-center flex-row w-[500px] pl-4 border-2', borderColor, bgColor)}>
+			<Card className={cn('rounded-2xl flex items-center flex-row pl-4 border-2', borderColor, bgColor)}>
 				<div>{icon}</div>
 				<CardContent className="flex flex-row gap-4 p-4">
 					<div>{content}</div>

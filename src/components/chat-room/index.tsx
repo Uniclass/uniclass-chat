@@ -2,18 +2,18 @@ import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { ComponentMessage } from '../component-message'
 import { NotificationMessage } from '../server-noti-message'
+import { SocketBadgeStatus } from '../socket-badge-status'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
-import { Badge } from '../ui/badge'
 
 const formSchema = z.object({
 	message: z.string().min(2).max(50)
@@ -47,6 +47,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 	const [myProfile, setMyProfile] = useState<RoomAttendan>()
 	const [opponentProfile, setOpponentMyProfile] = useState<RoomAttendan>()
 	const { rooms, profile, sendMessage, sending, fetchChatMessage, fetchUserProfile } = useChatStore()
+	const messagesEndRef = useRef(null)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -79,6 +80,11 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 			}
 		}
 	}, [profile, userId])
+
+	useEffect(() => {
+		// prettier-ignore
+		(messagesEndRef.current as HTMLElement | null)?.scrollIntoView({ behavior: 'smooth' })
+	}, [messages])
 
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
 		// if userId === teacher_id then sender_id === teacher otherwise sender_id === student
@@ -115,100 +121,82 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 	}
 
 	return (
-		<div className="flex flex-row relative z-10">
-			<Card className="rounded-none w-full" key={roomId}>
-				<CardHeader className="flex items-center border-b-[1px]">
-					<CardTitle className="max-w-[70%] text-center">
-						{currentRoom.room_name} ({currentRoom.room_id})
-					</CardTitle>
-					<CardDescription>
-						{profile[0]?.firstname} {profile[0]?.lastname}
-					</CardDescription>
-				</CardHeader>
-				<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
-				<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
-				<Badge variant="outline" className="absolute top-20 right-4">
-					{socketStatus ? (
-						<>
-							Connected <div className="p-[3px] bg-green-400 rounded-full ml-1" />
-						</>
-					) : (
-						<>
-							Disconnected <div className="p-[3px] bg-red-400 rounded-full ml-1" />
-						</>
-					)}
-				</Badge>
-				<CardContent className="p-0">
-					<ScrollArea className="h-full w-full rounded-md mt-4 p-4">
-						{messages.map((message: ChatMessage) => (
-							<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
-								{message.type === 'COMP' && (
-									<div className="flex flex-row items-end gap-2">
-										<Avatar>
-											<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-											<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-										</Avatar>
-										<ComponentMessage {...message} />
-									</div>
-								)}
-								{message.type === 'MSG' && (
-									<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
-										<Avatar>
-											<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-											<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-										</Avatar>
-										<div
-											className={cn(
-												'flex flex-col  text-black p-2 px-4 rounded-t-full',
-												message.sender_id === userId ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100'
-											)}
-										>
-											<p>{message.content}</p>
-										</div>
-									</div>
-								)}
-								{message.type === 'NOTI' && <NotificationMessage {...message} />}
-							</div>
-						))}
-						{sending && (
-							<div className={cn('flex items-end gap-2 flex-row-reverse')}>
+		<Card className="flex flex-col relative rounded-none h-[90vh] w-full z-10" key={roomId}>
+			<CardHeader className="flex items-center border-b-[1px]">
+				<CardTitle className="max-w-[70%] text-center">
+					{currentRoom.room_name} ({currentRoom.room_id})
+				</CardTitle>
+				<CardDescription>
+					{profile[0]?.firstname} {profile[0]?.lastname}
+				</CardDescription>
+				<SocketBadgeStatus socketStatus={socketStatus} />
+			</CardHeader>
+			<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
+			<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
+			<ScrollArea className="px-3 h-full">
+				{messages.map((message: ChatMessage) => (
+					<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
+						{message.type === 'COMP' && (
+							<div className="flex flex-row items-end gap-2">
 								<Avatar>
-									<AvatarImage src={getProfile(userId)?.photo_url} />
-									<AvatarFallback>{getProfile(userId)?.firstname}</AvatarFallback>
+									<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+									<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
 								</Avatar>
-								<div className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full rounded-l-full bg-blue-100')}>
-									<p>กำลังส่ง...</p>
+								<ComponentMessage {...message} />
+							</div>
+						)}
+						{message.type === 'MSG' && (
+							<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
+								<Avatar>
+									<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
+									<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
+								</Avatar>
+								<div
+									className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full', message.sender_id === userId ? 'rounded-l-full bg-blue-100' : 'rounded-r-full bg-gray-100')}
+								>
+									<p>{message.content}</p>
 								</div>
 							</div>
 						)}
-					</ScrollArea>
-				</CardContent>
-				<CardFooter className="p-4">
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-							<FormField
-								control={form.control}
-								name="message"
-								render={({ field }) => (
-									<FormItem>
-										{/* <FormLabel>Username</FormLabel> */}
-										<FormControl>
-											<div className="flex flex-row gap-1">
-												<Input disabled={!socketStatus} placeholder="Aa" {...field} />
-												<Button disabled={!socketStatus} type="submit" variant="outline">
-													Send
-												</Button>
-											</div>
-										</FormControl>
-										{/* <FormDescription>Test Websocket</FormDescription> */}
-										<FormMessage className="text-red-400" />
-									</FormItem>
-								)}
-							/>
-						</form>
-					</Form>
-				</CardFooter>
-			</Card>
-		</div>
+						{message.type === 'NOTI' && <NotificationMessage {...message} />}
+					</div>
+				))}
+				{sending && (
+					<div className={cn('flex items-end gap-2 flex-row-reverse')}>
+						<Avatar>
+							<AvatarImage src={getProfile(userId)?.photo_url} />
+							<AvatarFallback>{getProfile(userId)?.firstname}</AvatarFallback>
+						</Avatar>
+						<div className={cn('flex flex-col  text-black p-2 px-4 rounded-t-full rounded-l-full bg-blue-100')}>
+							<p>กำลังส่ง...</p>
+						</div>
+					</div>
+				)}
+				<div ref={messagesEndRef} />
+			</ScrollArea>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full p-3">
+					<FormField
+						control={form.control}
+						name="message"
+						render={({ field }) => (
+							<FormItem>
+								{/* <FormLabel>Username</FormLabel> */}
+								<FormControl>
+									<div className="flex flex-row gap-1">
+										<Input disabled={!socketStatus} placeholder="Aa" {...field} />
+										<Button disabled={!socketStatus} type="submit" variant="outline">
+											Send
+										</Button>
+									</div>
+								</FormControl>
+								{/* <FormDescription>Test Websocket</FormDescription> */}
+								<FormMessage className="text-red-400" />
+							</FormItem>
+						)}
+					/>
+				</form>
+			</Form>
+		</Card>
 	)
 }
