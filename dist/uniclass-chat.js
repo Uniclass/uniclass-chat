@@ -10795,7 +10795,7 @@ const jf = Md({
       break;
   }
   return /* @__PURE__ */ m.jsxs(wt, { className: "rounded-none bg-white w-full", children: [
-    /* @__PURE__ */ m.jsx(jn, { className: " px-3 pt-3 pb-0", children: /* @__PURE__ */ m.jsx("h2", { className: "text-lg font-bold", children: "สถานะ" }) }),
+    /* @__PURE__ */ m.jsx(jn, { className: " px-3 pt-3 pb-0", children: /* @__PURE__ */ m.jsx("p", { className: "text-lg font-bold", children: "สถานะ" }) }),
     /* @__PURE__ */ m.jsxs(yr, { className: "p-3 flex flex-row justify-between", children: [
       /* @__PURE__ */ m.jsxs("div", { children: [
         /* @__PURE__ */ m.jsxs("div", { className: "flex flex-row gap-3 items-center", children: [
@@ -10850,7 +10850,7 @@ const jf = Md({
       )
     ] }) })
   ] }),
-  /* @__PURE__ */ m.jsx("div", { className: "w-full mt-3", children: /* @__PURE__ */ m.jsx(tr, { className: "w-full bg-orange-500 hover:bg-orange-400", children: "เปลี่ยนครู" }) })
+  /* @__PURE__ */ m.jsx("div", { className: "w-full mt-3", children: /* @__PURE__ */ m.jsx(tr, { className: "w-full text-white bg-orange-500 hover:bg-orange-400", children: "เปลี่ยนครู" }) })
 ] }) });
 var Mf = Object.defineProperty, Lf = (e, t, r) => t in e ? Mf(e, t, { enumerable: !0, configurable: !0, writable: !0, value: r }) : e[t] = r, ps = (e, t, r) => (Lf(e, typeof t != "symbol" ? t + "" : t, r), r);
 let Ff = class {

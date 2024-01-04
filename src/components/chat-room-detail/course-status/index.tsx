@@ -57,7 +57,7 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 	return (
 		<Card className="rounded-none bg-white w-full">
 			<CardHeader className=" px-3 pt-3 pb-0">
-				<h2 className="text-lg font-bold">สถานะ</h2>
+				<p className="text-lg font-bold">สถานะ</p>
 			</CardHeader>
 			<CardContent className="p-3 flex flex-row justify-between">
 				<div>

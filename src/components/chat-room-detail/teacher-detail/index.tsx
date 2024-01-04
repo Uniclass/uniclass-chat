@@ -52,7 +52,7 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 					</div>
 				</div>
 				<div className="w-full mt-3">
-					<Button className="w-full bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
+					<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
 				</div>
 			</CardContent>
 		</Card>
