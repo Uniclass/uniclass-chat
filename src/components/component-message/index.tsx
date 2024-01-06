@@ -10,7 +10,9 @@ export const ComponentMessage: FC<ChatMessage> = () => {
 	return (
 		<Card className="bg-[#ffebd9] border-none w-[400px]">
 			<CardHeader className="p-4">
-				<CardTitle>เรียนเสร็จแล้ว</CardTitle>
+				<CardTitle className="text-xl">
+					<p className="text-lg">เรียนเสร็จแล้ว</p>
+				</CardTitle>
 			</CardHeader>
 			<CardContent className="flex flex-col gap-4 p-4">
 				<div className="bg-white p-3 rounded-md shadow-lg flex flex-row gap-3 items-center">
@@ -32,13 +34,15 @@ export const ComponentMessage: FC<ChatMessage> = () => {
 					<DialogTrigger className="w-full mt-3">
 						<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">ทำแบบประเมิน</Button>
 					</DialogTrigger>
-					<DialogContent>
+					<DialogContent className="bg-white">
 						<DialogHeader>
-							<DialogTitle>A056 (วิชา คณิตศาสตร์ ป.1 หลักสูตร ไทย คอร์ส 6 ครั้ง)</DialogTitle>
+							<DialogTitle>
+								<p className="text-lg">A056 (วิชา คณิตศาสตร์ ป.1 หลักสูตร ไทย คอร์ส 6 ครั้ง)</p>
+							</DialogTitle>
 							<DialogDescription className="flex flex-col gap-3">
 								<div className="flex flex-row gap-3">
-									<Badge className="bg-gray-400">คณิตศาสตร์</Badge>
-									<Badge className="bg-gray-400">ป.1</Badge>
+									<Badge className="bg-gray-400 text-white">คณิตศาสตร์</Badge>
+									<Badge className="bg-gray-400 text-white">ป.1</Badge>
 								</div>
 							</DialogDescription>
 							<div>

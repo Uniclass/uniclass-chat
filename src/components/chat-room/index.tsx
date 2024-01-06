@@ -138,10 +138,10 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 					<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
 						{message.type === 'COMP' && (
 							<div className="flex flex-row items-end gap-2">
-								<Avatar>
+								{/* <Avatar>
 									<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
 									<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-								</Avatar>
+								</Avatar> */}
 								<ComponentMessage {...message} />
 							</div>
 						)}

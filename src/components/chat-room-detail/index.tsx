@@ -1,13 +1,12 @@
 import { fetchChatRoomDetail } from '@/common/api/chat'
 import { Transition } from '@headlessui/react'
 import { FC, Fragment, useEffect, useState } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
+import { Error } from '../error'
 import { ClassSchedule } from './class-schedule'
 import { CourseDetail } from './course-detail'
 import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
-import { ErrorBoundary } from 'react-error-boundary'
-import { Error } from '../error'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 
 type ChatRoomDetailProps = {
 	dataBaseApiUrl: string

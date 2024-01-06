@@ -59,10 +59,12 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 					<DialogTrigger className="w-full mt-3">
 						<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
 					</DialogTrigger>
-					<DialogContent>
+					<DialogContent className="bg-white">
 						<DialogHeader>
 							<DialogTitle>
-								เปลี่ยนครู {teacher.firstname} {teacher.lastname} ({teacher.title})
+								<p className="text-xl">
+									เปลี่ยนครู {teacher.firstname} {teacher.lastname} ({teacher.title})
+								</p>
 							</DialogTitle>
 							<DialogDescription className="flex flex-col gap-3">
 								<p>

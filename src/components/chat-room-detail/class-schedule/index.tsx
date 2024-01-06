@@ -44,7 +44,7 @@ const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name }) => {
 			{/* COUNTDOWN TIME */}
 			<div className="text-indigo-500 text-2xl text-center font-bold">00:25:15</div>
 			{/* ENTER CLASS BUTTON */}
-			<Button className="w-full rounded-xl bg-orange-500 hover:bg-orange-400" onClick={() => window.open('https://meet.google.com/?pli=1')}>
+			<Button className="w-full text-white rounded-xl bg-orange-500 hover:bg-orange-400" onClick={() => window.open('https://meet.google.com/?pli=1')}>
 				<IconBook size={20} className="mr-3" />
 				เข้าห้องเรียน
 			</Button>
