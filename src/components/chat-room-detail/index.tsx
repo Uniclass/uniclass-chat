@@ -1,10 +1,13 @@
 import { fetchChatRoomDetail } from '@/common/api/chat'
-import { FC, useEffect, useState, Fragment } from 'react'
+import { Transition } from '@headlessui/react'
+import { FC, Fragment, useEffect, useState } from 'react'
+import { ClassSchedule } from './class-schedule'
 import { CourseDetail } from './course-detail'
 import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
-import { Transition } from '@headlessui/react'
-import { ClassSchedule } from './class-schedule'
+import { ErrorBoundary } from 'react-error-boundary'
+import { Error } from '../error'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 
 type ChatRoomDetailProps = {
 	dataBaseApiUrl: string
@@ -40,16 +43,24 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authTo
 				<div className="bg-gray-100" onClick={() => setSideMenuOpen(false)}>
 					<div className="min-w-[300px] h-[90vh]" onClick={(e) => e.stopPropagation()}>
 						{/* COURSE DETAIL */}
-						<CourseDetail order={chatRoomDetail.order} teacher={chatRoomDetail.teacher} />
+						<ErrorBoundary fallback={<Error>มีข้อผิดพลาดเกิดขึ้น</Error>}>
+							<CourseDetail order={chatRoomDetail.order} teacher={chatRoomDetail.teacher} />
+						</ErrorBoundary>
 						{/* COURSE STATUS */}
-						<CourseStatus orderStatus={chatRoomDetail.order.order_status} />
+						<ErrorBoundary fallback={<Error>มีข้อผิดพลาดเกิดขึ้น</Error>}>
+							<CourseStatus orderStatus={chatRoomDetail.order.order_status} />
+						</ErrorBoundary>
 						{/* CLASS SCHEDULE */}
-						<ClassSchedule order={chatRoomDetail.order} />
+						<ErrorBoundary fallback={<Error>มีข้อผิดพลาดเกิดขึ้น</Error>}>
+							<ClassSchedule order={chatRoomDetail.order} />
+						</ErrorBoundary>
 						{/* CLASS DETAIL */}
-						{/* <ClassDetail /> */}
 						{/* TEACHER / STUDENT DETAIL */}
-						<TeacherDetail teacher={chatRoomDetail.teacher} />
+						<ErrorBoundary fallback={<Error>มีข้อผิดพลาดเกิดขึ้น</Error>}>
+							<TeacherDetail teacher={chatRoomDetail.teacher} />
+						</ErrorBoundary>
 						{/* <StudentDetail /> */}
+						{/* <StudentDetail student={chatRoomDetail.student} /> */}
 					</div>
 				</div>
 			</Transition>

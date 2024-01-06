@@ -4,6 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
 import { Card, CardContent } from '../../ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 type TeacherDetailProps = {
 	teacher: ChatRoomDetail['teacher']
@@ -51,9 +55,39 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 						</div>
 					</div>
 				</div>
-				<div className="w-full mt-3">
-					<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
-				</div>
+				<Dialog>
+					<DialogTrigger className="w-full mt-3">
+						<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
+					</DialogTrigger>
+					<DialogContent>
+						<DialogHeader>
+							<DialogTitle>
+								เปลี่ยนครู {teacher.firstname} {teacher.lastname} ({teacher.title})
+							</DialogTitle>
+							<DialogDescription className="flex flex-col gap-3">
+								<p>
+									ท่านต้องการเปลี่ยนครู {teacher.firstname} {teacher.lastname} หรือไม่?
+								</p>
+								<div>
+									<Label>หมายเหตุ</Label>
+									<Input placeholder="กรอกเหตุผลที่ต้องการเปลี่ยนครู" />
+								</div>
+							</DialogDescription>
+						</DialogHeader>
+						<DialogFooter className="mt-3">
+							<DialogClose asChild>
+								<Button className="bg-gray-500 hover:bg-gray-400 w-[50%]" type="button">
+									ยกเลิก
+								</Button>
+							</DialogClose>
+							<DialogClose asChild>
+								<Button className="bg-red-500 hover:bg-red-400 w-[50%]" type="submit">
+									ยืนยัน
+								</Button>
+							</DialogClose>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</CardContent>
 		</Card>
 	)
