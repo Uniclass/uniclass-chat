@@ -76,12 +76,12 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 						</DialogHeader>
 						<DialogFooter className="mt-3">
 							<DialogClose asChild>
-								<Button className="bg-gray-500 hover:bg-gray-400 w-[50%]" type="button">
+								<Button className="bg-gray-500 hover:bg-gray-400 w-[50%] text-white" type="button">
 									ยกเลิก
 								</Button>
 							</DialogClose>
 							<DialogClose asChild>
-								<Button className="bg-red-500 hover:bg-red-400 w-[50%]" type="submit">
+								<Button className="bg-red-500 hover:bg-red-400 w-[50%] text-white" type="submit">
 									ยืนยัน
 								</Button>
 							</DialogClose>
