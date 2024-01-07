@@ -18,7 +18,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test:cover": "vitest --coverage",
     "test:ui": "vitest --ui",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
