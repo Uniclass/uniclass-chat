@@ -24,7 +24,7 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, se
 			leaveFrom="opacity-100 translate-x-0"
 			leaveTo="opacity-0 translate-x-10"
 		>
-			<div className="flex flex-col border-y border-l h-[90vh]">
+			<div className="flex flex-col bg-white border-y border-l h-[90vh]">
 				{chatRoom &&
 					chatRoom.map((room: ChatRoom, index: number) => {
 						return (

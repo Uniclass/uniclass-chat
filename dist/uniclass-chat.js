@@ -12660,7 +12660,7 @@ const un = ({ children: e }) => /* @__PURE__ */ h.jsxs(wt, { className: "p-3 fle
     leave: "transition ease-in duration-150",
     leaveFrom: "opacity-100 translate-x-0",
     leaveTo: "opacity-0 translate-x-10",
-    children: /* @__PURE__ */ h.jsx("div", { className: "flex flex-col border-y border-l h-[90vh]", children: t && t.map((o, a) => {
+    children: /* @__PURE__ */ h.jsx("div", { className: "flex flex-col bg-white border-y border-l h-[90vh]", children: t && t.map((o, a) => {
       var i, c, l, u;
       return /* @__PURE__ */ h.jsxs(
         "button",
@@ -12719,7 +12719,7 @@ const un = ({ children: e }) => /* @__PURE__ */ h.jsxs(wt, { className: "p-3 fle
         chatRoom: f
       }
     ),
-    f && f.map((w, E) => /* @__PURE__ */ h.jsx("div", { className: `w-full  ${s === E ? "block" : "hidden"}`, children: /* @__PURE__ */ h.jsxs("div", { className: "flex flex-row", children: [
+    f && f.map((w, E) => /* @__PURE__ */ h.jsx("div", { className: `w-full  ${s === E ? "block" : "hidden"}`, children: /* @__PURE__ */ h.jsxs("div", { className: "flex flex-row overflow-hidden", children: [
       /* @__PURE__ */ h.jsx(
         Om,
         {
