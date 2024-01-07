@@ -45,18 +45,19 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, se
 					chatRoom.map((room: ChatRoom, index: number) => {
 						if (!rooms[room.room_id]) return null
 						const latestMessage = rooms[room.room_id][rooms[room.room_id].length - 1]
-
 						return (
-							<ChatRoomItem
-								room={room}
-								selectedTab={selectedTab}
-								index={index}
-								setSelectedTab={setSelectedTab}
-								removeLatestMessage={removeLatestMessage}
-								userProfiles={userProfiles}
-								latestMessage={latestMessage}
-								getNotiLatestMessage={getNotiLatestMessage}
-							/>
+							<div key={room.room_id}>
+								<ChatRoomItem
+									room={room}
+									selectedTab={selectedTab}
+									index={index}
+									setSelectedTab={setSelectedTab}
+									removeLatestMessage={removeLatestMessage}
+									userProfiles={userProfiles}
+									latestMessage={latestMessage}
+									getNotiLatestMessage={getNotiLatestMessage}
+								/>
+							</div>
 						)
 					})}
 			</div>
@@ -78,7 +79,6 @@ type ChatRoomItemProps = {
 export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab, removeLatestMessage, userProfiles, latestMessage, getNotiLatestMessage }) => {
 	return (
 		<button
-			key={room.id}
 			className={cn('min-w-[300px] px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
 			onClick={() => {
 				setSelectedTab(index)

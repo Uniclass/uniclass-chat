@@ -70,26 +70,25 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 				userId={userId}
 			/>
 
-			{chatRoom &&
-				chatRoom.map((room: ChatRoom, index: number) => (
-					<div key={room.id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
-						<div className="flex flex-row overflow-hidden">
-							<ChatRoom
-								dataBaseApiUrl={dataBaseApiUrl}
-								authToken={authToken}
-								currentRoom={room}
-								roomId={room.room_id}
-								userId={userId}
-								socketStatus={socketStatus}
-								setRoomMenuOpen={setRoomMenuOpen}
-								roomMenuOpen={roomMenuOpen}
-								sideMenuOpen={sideMenuOpen}
-								setSideMenuOpen={setSideMenuOpen}
-							/>
-							<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
-						</div>
+			{chatRoom.map((room: ChatRoom, index: number) => (
+				<div key={room.room_id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
+					<div className="flex flex-row overflow-hidden">
+						<ChatRoom
+							dataBaseApiUrl={dataBaseApiUrl}
+							authToken={authToken}
+							currentRoom={room}
+							roomId={room.room_id}
+							userId={userId}
+							socketStatus={socketStatus}
+							setRoomMenuOpen={setRoomMenuOpen}
+							roomMenuOpen={roomMenuOpen}
+							sideMenuOpen={sideMenuOpen}
+							setSideMenuOpen={setSideMenuOpen}
+						/>
+						<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
 					</div>
-				))}
+				</div>
+			))}
 		</div>
 	)
 }
