@@ -11,7 +11,7 @@ import { SocketBadgeStatus } from '../socket-badge-status'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
+import { Form, FormControl, FormField, FormItem } from '../ui/form'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
 
@@ -178,20 +178,21 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full p-3">
 					<FormField
 						control={form.control}
+						disabled={!socketStatus || !currentRoom.room_status}
 						name="message"
 						render={({ field }) => (
 							<FormItem>
 								{/* <FormLabel>Username</FormLabel> */}
 								<FormControl>
 									<div className="flex flex-row gap-1">
-										<Input disabled={!socketStatus} placeholder="Aa" {...field} />
-										<Button disabled={!socketStatus} type="submit" variant="outline">
+										<Input data-testid="message-input" placeholder="Aa" {...field} />
+										<Button data-testid="message-submit" disabled={!socketStatus || !currentRoom.room_status} type="submit" variant="outline">
 											Send
 										</Button>
 									</div>
 								</FormControl>
 								{/* <FormDescription>Test Websocket</FormDescription> */}
-								<FormMessage className="text-red-400" />
+								{/* <FormMessage className="text-red-400" /> */}
 							</FormItem>
 						)}
 					/>

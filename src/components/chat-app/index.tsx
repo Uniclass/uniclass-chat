@@ -57,7 +57,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
 	return (
-		<div className="flex flex-row w-full">
+		<div data-testid="chat-app" className="flex flex-row w-full">
 			<ChatRoomMenu
 				roomMenuOpen={roomMenuOpen}
 				setRoomMenuOpen={setRoomMenuOpen}
@@ -65,6 +65,9 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 				setSelectedTab={setSelectedTab}
 				userProfiles={userProfiles}
 				chatRoom={chatRoom}
+				dataBaseApiUrl={dataBaseApiUrl}
+				authToken={authToken}
+				userId={userId}
 			/>
 
 			{chatRoom &&

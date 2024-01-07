@@ -29,6 +29,7 @@ export default defineConfig({
 	},
 	plugins: [react(), dts({ rollupTypes: true })],
 	test: {
-		globals: true
+		globals: true,
+		environment: 'jsdom'
 	}
 })

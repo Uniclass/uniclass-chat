@@ -1,8 +1,9 @@
 import { fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList } from '@/common/api/chat'
-import create from 'zustand'
+import { create } from 'zustand'
 
 type StoreState = {
 	rooms: Record<string, ChatMessage[]>
+	notiLatestMessages: ChatMessage[]
 	profile: RoomAttendan[]
 	socket: WebSocket | null
 	socketStatus: boolean
@@ -15,10 +16,12 @@ type StoreActions = {
 	sendMessage: (dataBaseApiUrl: string, authToken: string, data: ChatMessage, room_id: string) => void
 	fetchChatMessage: (dataBaseApiUrl: string, authToken: string, room_id: string, ts_st: string, ts_en: string) => void
 	fetchUserProfile: (dataBaseApiUrl: string, authToken: string, room_Id: string) => void
+	updateLatestMessage: (roomId: string) => void
 }
 
 const initialState = {
 	rooms: {},
+	notiLatestMessages: [],
 	profile: [],
 	socket: null,
 	socketStatus: false,
@@ -52,7 +55,8 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 				rooms: {
 					...state.rooms,
 					[room_id]: [...(state.rooms[room_id] || []), message]
-				}
+				},
+				notiLatestMessages: [...state.notiLatestMessages, message]
 			}))
 		}
 
@@ -129,5 +133,16 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 		} catch (err) {
 			console.log(err)
 		}
+	},
+
+	updateLatestMessage: (roomId) => {
+		const { notiLatestMessages } = get()
+		const data = notiLatestMessages.filter((msg) => msg.room_id !== roomId)
+
+		console.log(data)
+
+		set(() => ({
+			notiLatestMessages: [...data]
+		}))
 	}
 }))
