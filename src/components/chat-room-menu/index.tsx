@@ -16,7 +16,7 @@ type ChatRoomMenuProps = {
 	userId: string
 }
 
-export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, dataBaseApiUrl, authToken, userId }) => {
+export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, userId }) => {
 	const { rooms, notiLatestMessages, updateLatestMessage } = useChatStore()
 
 	const getNotiLatestMessage = (currentRoomId: string) => {
