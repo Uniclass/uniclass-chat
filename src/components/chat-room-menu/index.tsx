@@ -3,6 +3,8 @@ import { useChatStore } from '@/store/use-chat-store'
 import { Transition } from '@headlessui/react'
 import { FC, Fragment, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { Button } from '../ui/button'
+import { IconX } from '@tabler/icons-react'
 
 type ChatRoomMenuProps = {
 	roomMenuOpen: boolean
@@ -49,13 +51,18 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 			show={roomMenuOpen}
 			as={Fragment}
 			enter="transition ease-out duration-200"
-			enterFrom="opacity-0 translate-x-10"
+			enterFrom={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}
 			enterTo="opacity-100 translate-x-0"
 			leave="transition ease-in duration-150"
 			leaveFrom="opacity-100 translate-x-0"
-			leaveTo="opacity-0 translate-x-10"
+			leaveTo={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}
 		>
-			<div className="flex flex-col bg-white border-y border-l h-[90vh]">
+			<div className={cn('flex flex-col bg-white border-y border-l h-[90vh]', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')}>
+				{isMobile && (
+					<Button className="p-2 my-2 w-fit ml-auto" variant="ghost">
+						<IconX className="active:translate-y-[1px]" size={24} onClick={() => setRoomMenuOpen(false)} />
+					</Button>
+				)}
 				{chatRoom &&
 					chatRoom.map((room: ChatRoom, index: number) => {
 						if (!rooms[room.room_id]) return null
