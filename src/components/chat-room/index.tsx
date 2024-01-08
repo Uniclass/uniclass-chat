@@ -121,7 +121,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 	}
 
 	return (
-		<Card className="flex flex-col relative rounded-none h-[90vh] w-full z-10" key={roomId}>
+		<Card className="flex flex-col relative rounded-none h-[90vh] w-full z-10 bg-white" key={roomId}>
 			<CardHeader className="flex items-center border-b-[1px]">
 				<CardTitle className="max-w-[70%] text-center">
 					{currentRoom.room_name} ({currentRoom.room_id})

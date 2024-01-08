@@ -19,6 +19,21 @@ type ChatRoomDetailProps = {
 export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authToken, roomId, sideMenuOpen, setSideMenuOpen }) => {
 	const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null)
 
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 720)
+			setSideMenuOpen(false)
+		}
+
+		window.addEventListener('resize', handleResize)
+
+		return () => {
+			window.removeEventListener('resize', handleResize)
+		}
+	}, [])
+
 	useEffect(() => {
 		if (roomId) {
 			fetchChatRoomDetail(dataBaseApiUrl, authToken, roomId).then((res: ChatRoomDetail) => {

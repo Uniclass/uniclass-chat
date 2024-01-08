@@ -16,7 +16,7 @@ type ChatRoomMenuProps = {
 	userId: string
 }
 
-export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, userId }) => {
+export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, userId }) => {
 	const { rooms, notiLatestMessages, updateLatestMessage } = useChatStore()
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
@@ -24,6 +24,7 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, se
 	useEffect(() => {
 		const handleResize = () => {
 			setIsMobile(window.innerWidth <= 720)
+			setRoomMenuOpen(false)
 		}
 
 		window.addEventListener('resize', handleResize)
@@ -61,7 +62,6 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, se
 						const latestMessage = rooms[room.room_id][rooms[room.room_id].length - 1]
 						return (
 							<div key={room.room_id}>
-								{isMobile.toString()}
 								<ChatRoomItem
 									room={room}
 									selectedTab={selectedTab}
