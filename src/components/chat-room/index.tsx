@@ -136,15 +136,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({
 			<ScrollArea className="px-3 h-full">
 				{messages.map((message: ChatMessage) => (
 					<div key={message.id} className={cn('flex gap-2 my-2', message.sender_id === userId ? 'flex-row justify-end' : 'flex-row-reverse justify-end')}>
-						{message.type === 'COMP' && (
-							<div className="flex flex-row items-end gap-2">
-								{/* <Avatar>
-									<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-									<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
-								</Avatar> */}
-								<ComponentMessage {...message} />
-							</div>
-						)}
+						{message.type === 'COMP' && <ComponentMessage authToken={authToken} dataBaseApiUrl={dataBaseApiUrl} {...message} />}
 						{message.type === 'MSG' && (
 							<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
 								<Avatar>

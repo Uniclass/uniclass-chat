@@ -72,7 +72,7 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 
 			{chatRoom.map((room: ChatRoom, index: number) => (
 				<div key={room.room_id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
-					<div className="flex flex-row overflow-hidden">
+					<div className="flex flex-row ">
 						<ChatRoom
 							dataBaseApiUrl={dataBaseApiUrl}
 							authToken={authToken}

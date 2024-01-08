@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
 import { Transition } from '@headlessui/react'
-import { FC, Fragment } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 
 type ChatRoomMenuProps = {
@@ -18,6 +18,20 @@ type ChatRoomMenuProps = {
 
 export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, userId }) => {
 	const { rooms, notiLatestMessages, updateLatestMessage } = useChatStore()
+
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 720)
+		}
+
+		window.addEventListener('resize', handleResize)
+
+		return () => {
+			window.removeEventListener('resize', handleResize)
+		}
+	}, [])
 
 	const getNotiLatestMessage = (currentRoomId: string) => {
 		const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
@@ -47,6 +61,7 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, chatRoom, se
 						const latestMessage = rooms[room.room_id][rooms[room.room_id].length - 1]
 						return (
 							<div key={room.room_id}>
+								{isMobile.toString()}
 								<ChatRoomItem
 									room={room}
 									selectedTab={selectedTab}
@@ -79,7 +94,7 @@ type ChatRoomItemProps = {
 export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab, removeLatestMessage, userProfiles, latestMessage, getNotiLatestMessage }) => {
 	return (
 		<button
-			className={cn('min-w-[300px] px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
+			className={cn('min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
 			onClick={() => {
 				setSelectedTab(index)
 				removeLatestMessage(room.room_id)

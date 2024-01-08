@@ -6,7 +6,7 @@ type ChatMessage = {
 	sender_id: string
 	content?: string
 	comp_type?: string
-	comp_data?: string
+	comp_data?: any
 	skip_audience_type?: string
 	file_url?: string
 }

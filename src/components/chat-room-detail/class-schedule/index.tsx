@@ -1,24 +1,41 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { IconBook } from '@tabler/icons-react'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 type ClassScheduleProps = {
 	order: ChatRoomDetail['order']
+	time?: string
 }
 
-export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name } }) => {
+export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, order_status }, time }) => {
+	let classStatus
+
+	switch (order_status) {
+		case 'A':
+			classStatus = 'กำลังจะถึงเวลาเรียน'
+			break
+		case 'B':
+			classStatus = 'กำลังเรียน'
+			break
+		case 'C':
+			classStatus = 'เรียนจบแล้ว'
+			break
+		default:
+			classStatus = 'เริ่มเรียน'
+			break
+	}
 	return (
 		<Card className="relative bg-white rounded-none w-full p-0">
 			<CardHeader className="p-3">
 				<p className="text-lg font-bold">การเรียน</p>
 				<p className="text-lg font-normal">
 					Class Schedule:
-					<span className="text-orange-400 ml-1">กำลังเรียน</span>
+					<span className="text-orange-400 ml-1">{classStatus}</span>
 				</p>
 			</CardHeader>
 			<CardContent className="p-3">
-				<ScheduleInfo course_name={course_name} />
+				<ScheduleInfo course_name={course_name} time={time || '00:00:00'} />
 			</CardContent>
 		</Card>
 	)
@@ -26,9 +43,10 @@ export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name } }
 
 type ScheduleInfoProps = {
 	course_name: string
+	time: string
 }
 
-const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name }) => {
+const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name, time }) => {
 	return (
 		<Card className="border-orange-200 bg-orange-100/50 p-3 flex flex-col gap-3">
 			{/* UNICLASS LOGO */}
@@ -42,7 +60,7 @@ const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name }) => {
 				<p className="text-lg font-normal">กำลังจะเริ่มใน</p>
 			</div>
 			{/* COUNTDOWN TIME */}
-			<div className="text-indigo-500 text-2xl text-center font-bold">00:25:15</div>
+			<div className="text-indigo-500 text-2xl text-center font-bold">{Countdown(time)}</div>
 			{/* ENTER CLASS BUTTON */}
 			<Button className="w-full text-white rounded-xl bg-orange-500 hover:bg-orange-400" onClick={() => window.open('https://meet.google.com/?pli=1')}>
 				<IconBook size={20} className="mr-3" />
@@ -50,4 +68,41 @@ const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name }) => {
 			</Button>
 		</Card>
 	)
+}
+
+const Countdown = (time_src: string) => {
+	const calculateTimeLeft = () => {
+		const targetDate = new Date(time_src)
+		const now = new Date()
+		const difference = targetDate.getTime() - now.getTime()
+
+		return difference > 0 ? difference / 1000 : 0 // convert to seconds
+	}
+
+	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const newTimeLeft = calculateTimeLeft()
+			setTimeLeft(newTimeLeft)
+		}, 1000)
+
+		return () => clearInterval(interval)
+	}, [])
+
+	if (timeLeft === 0) {
+		return <div className="text-red-400">00:00:00</div>
+	}
+
+	const hours = Math.floor(timeLeft / 3600)
+		.toString()
+		.padStart(2, '0')
+	const minutes = Math.floor((timeLeft / 60) % 60)
+		.toString()
+		.padStart(2, '0')
+	const seconds = Math.floor(timeLeft % 60)
+		.toString()
+		.padStart(2, '0')
+
+	return <div>{`${hours}:${minutes}:${seconds}`}</div>
 }

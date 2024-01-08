@@ -91,4 +91,17 @@ const fetchChatRoomDetail = (dataBaseApiUrl: string, authToken: string, room_id:
 		})
 }
 
-export { fetchChatRoom, fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList, fetchUserProfile, fetchChatRoomDetail }
+const getCandidateTeacherList = (dataBaseApiUrl: string, authToken: string, room_id: string) => {
+	return axios
+		.get(`${dataBaseApiUrl}/chat/order/candidate-teacher/list?order_id=${room_id || ''}`, {
+			headers: {
+				Authorization: `Bearer ${authToken}`
+			}
+		})
+		.then((res) => {
+			if (res.data.code === 200) return res.data.payload
+			throw new Error(res.data.message_ui || res.data.message)
+		})
+}
+
+export { fetchChatRoom, fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList, fetchUserProfile, fetchChatRoomDetail, getCandidateTeacherList }

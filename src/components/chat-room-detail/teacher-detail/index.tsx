@@ -11,15 +11,16 @@ import { Label } from '@/components/ui/label'
 
 type TeacherDetailProps = {
 	teacher: ChatRoomDetail['teacher']
+	hasButton: boolean
 }
 
-export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
+export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = true }) => {
 	return (
 		<Card className="rounded-none bg-white w-full">
 			<CardContent className="p-3">
 				{/* TEACHER PHOTO URL */}
 				<div className="flex flex-row justify-between w-full">
-					<div className="flex flex-row gap-3">
+					<div className="flex flex-row items-center gap-3">
 						<Avatar className="border-orange-400 border-2">
 							<AvatarImage src={teacher.photo_url} alt={teacher.firstname} />
 							<AvatarFallback>
@@ -42,7 +43,7 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 						</div>
 					</div>
 					<div className="flex flex-row">
-						<div className="flex flex-col items-end gap-3">
+						<div className="flex flex-col items-end gap-2">
 							<div className="flex flex-row gap-2">
 								<IconPhoneCall /> <div>{teacher.phone}</div>
 							</div>
@@ -56,9 +57,11 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher }) => {
 					</div>
 				</div>
 				<Dialog>
-					<DialogTrigger className="w-full mt-3">
-						<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
-					</DialogTrigger>
+					{hasButton && (
+						<DialogTrigger className="w-full mt-3">
+							<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
+						</DialogTrigger>
+					)}
 					<DialogContent className="bg-white">
 						<DialogHeader>
 							<DialogTitle>
