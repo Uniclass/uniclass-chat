@@ -1,13 +1,13 @@
+import { getCandidateTeacherList } from '@/common/api/chat'
+import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
+import { IconSquareCheck } from '@tabler/icons-react'
 import { FC, useEffect, useState } from 'react'
+import { ClassSchedule } from '../chat-room-detail/class-schedule'
+import { TeacherDetail } from '../chat-room-detail/teacher-detail'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { Badge } from '../ui/badge'
-import { IconSquareCheck, IconVideo } from '@tabler/icons-react'
-import { TeacherDetail } from '../chat-room-detail/teacher-detail'
-import { ClassSchedule } from '../chat-room-detail/class-schedule'
-import { getCandidateTeacherList } from '@/common/api/chat'
 
 type ComponentMessageProps = {
 	authToken: string
@@ -172,45 +172,45 @@ const ClassStartMessage: FC<ChatMessage> = ({ comp_data }) => {
 	)
 }
 
-const ContinueCourseMessage = () => {
-	return (
-		<div className="flex flex-row justify-center w-full">
-			<Card className="bg-[#ffebd9] border-none w-[400px]">
-				<CardHeader className="p-4">
-					<CardTitle className="text-xl">
-						<p className="text-lg">พร้อมเข้าห้องเรียนกันรึยัง?</p>
-					</CardTitle>
-					<CardDescription>
-						<p>{/* เช้านี้เรามีนัดกัน {time} นะ ในรายวิชา {comp_data_obj?.order_id} {comp_data_obj?.order_name} */}</p>
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="flex flex-col gap-4 p-4">
-					<div className="flex flex-col gap-3">
-						<p className="font-bold text-xl">กับคุณครู</p>
-						{/* <TeacherDetail
-							hasButton={false}
-							teacher={{
-								tid: 'TCA0002',
-								title: 'ครูริกโรล',
-								firstname: 'ริก',
-								lastname: 'โรลลิง',
-								phone: '+66859009804',
-								photo_url: 'https://s3.ap-southeast-1.amazonaws.com/uniclass.pub---dev/teacher/TCA0002/profile.pic'
-							}}
-						/> */}
-					</div>
-					<div className="flex flex-col gap-3">
-						<p className="font-bold text-xl">พร้อมแล้วกดเข้าห้องได้เลย</p>
-						{/* <ClassSchedule
-							time={countdown_time}
-							order={{ order_id: 'A012', order_id_mask: 'PpOcpS', order_status: 'A', course_id: 'MATTH06-04', course_name: 'วิชา คณิตศาสตร์ ป.3 หลักสูตร ไทย คอร์ส 6 ครั้ง' }}
-						/> */}
-					</div>
-				</CardContent>
-			</Card>
-		</div>
-	)
-}
+// const ContinueCourseMessage = () => {
+// 	return (
+// 		<div className="flex flex-row justify-center w-full">
+// 			<Card className="bg-[#ffebd9] border-none w-[400px]">
+// 				<CardHeader className="p-4">
+// 					<CardTitle className="text-xl">
+// 						<p className="text-lg">พร้อมเข้าห้องเรียนกันรึยัง?</p>
+// 					</CardTitle>
+// 					<CardDescription>
+// 						<p>{/* เช้านี้เรามีนัดกัน {time} นะ ในรายวิชา {comp_data_obj?.order_id} {comp_data_obj?.order_name} */}</p>
+// 					</CardDescription>
+// 				</CardHeader>
+// 				<CardContent className="flex flex-col gap-4 p-4">
+// 					<div className="flex flex-col gap-3">
+// 						<p className="font-bold text-xl">กับคุณครู</p>
+// 						{/* <TeacherDetail
+// 							hasButton={false}
+// 							teacher={{
+// 								tid: 'TCA0002',
+// 								title: 'ครูริกโรล',
+// 								firstname: 'ริก',
+// 								lastname: 'โรลลิง',
+// 								phone: '+66859009804',
+// 								photo_url: 'https://s3.ap-southeast-1.amazonaws.com/uniclass.pub---dev/teacher/TCA0002/profile.pic'
+// 							}}
+// 						/> */}
+// 					</div>
+// 					<div className="flex flex-col gap-3">
+// 						<p className="font-bold text-xl">พร้อมแล้วกดเข้าห้องได้เลย</p>
+// 						{/* <ClassSchedule
+// 							time={countdown_time}
+// 							order={{ order_id: 'A012', order_id_mask: 'PpOcpS', order_status: 'A', course_id: 'MATTH06-04', course_name: 'วิชา คณิตศาสตร์ ป.3 หลักสูตร ไทย คอร์ส 6 ครั้ง' }}
+// 						/> */}
+// 					</div>
+// 				</CardContent>
+// 			</Card>
+// 		</div>
+// 	)
+// }
 
 const TeacherEvaluateMessage = () => {
 	return (

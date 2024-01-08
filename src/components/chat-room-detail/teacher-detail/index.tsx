@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 
 type TeacherDetailProps = {
 	teacher: ChatRoomDetail['teacher']
-	hasButton: boolean
+	hasButton?: boolean
 }
 
 export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = true }) => {
