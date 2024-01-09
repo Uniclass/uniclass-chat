@@ -24,3 +24,6 @@ dist-ssr
 
 # TEST
 /coverage
+
+# storybook-static
+storybook-static
