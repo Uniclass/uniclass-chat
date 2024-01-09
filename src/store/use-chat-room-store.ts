@@ -1,4 +1,4 @@
-import { fetchChatRoom } from '@/common/api/chat'
+import { fetchChatRoom } from '@/common/api/chat.api'
 import { create } from 'zustand'
 
 type StoreState = {

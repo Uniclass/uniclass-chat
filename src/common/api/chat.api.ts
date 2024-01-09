@@ -104,4 +104,27 @@ const getCandidateTeacherList = (dataBaseApiUrl: string, authToken: string, room
 		})
 }
 
-export { fetchChatRoom, fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList, fetchUserProfile, fetchChatRoomDetail, getCandidateTeacherList }
+const putCandidateTeacherToOrder = (dataBaseApiUrl: string, authToken: string, body: { order_id: string; teacher_id: string }) => {
+	return axios
+		.put(`${dataBaseApiUrl}/chat/order/teacher/assign`, body, {
+			headers: {
+				Authorization: `Bearer ${authToken}`
+			}
+		})
+		.then((res) => {
+			if (res.data.code === 200) return res.data.payload
+			throw new Error(res.data.message_ui || res.data.message)
+		})
+}
+
+export {
+	fetchChatRoom,
+	fetchChatMessage,
+	sendChatMessage,
+	getAuthToken,
+	fetchUserProfileList,
+	fetchUserProfile,
+	fetchChatRoomDetail,
+	getCandidateTeacherList,
+	putCandidateTeacherToOrder
+}

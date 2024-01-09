@@ -1,7 +1,8 @@
-import { getCandidateTeacherList } from '@/common/api/chat'
+import { getCandidateTeacherList, putCandidateTeacherToOrder } from '@/common/api/chat.api'
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
-import { IconSquareCheck } from '@tabler/icons-react'
-import { FC, useEffect, useState } from 'react'
+import { IconAlertCircle, IconSquareCheck } from '@tabler/icons-react'
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
+import { FC } from 'react'
 import { ClassSchedule } from '../chat-room-detail/class-schedule'
 import { TeacherDetail } from '../chat-room-detail/teacher-detail'
 import { Badge } from '../ui/badge'
@@ -28,12 +29,10 @@ export const ComponentMessage: FC<ChatMessage & ComponentMessageProps> = (messag
 }
 
 const TeacherSelectMessage: FC<ChatMessage & ComponentMessageProps> = ({ comp_data, authToken, dataBaseApiUrl }) => {
-	const [cadidateTeacherList, setCandidateTeacherList] = useState<Teacher[]>([])
-	const comp_data_obj = JSON.parse(comp_data || '{}')
+	// Queries
+	const query = useQuery({ queryKey: ['candidate-teacher'], queryFn: () => getCandidateTeacherList(dataBaseApiUrl, authToken, comp_data_obj?.order_id) })
 
-	useEffect(() => {
-		getCandidateTeacherList(dataBaseApiUrl, authToken, comp_data_obj?.order_id).then((res) => setCandidateTeacherList(res))
-	}, [authToken, comp_data_obj?.order_id, dataBaseApiUrl])
+	const comp_data_obj = JSON.parse(comp_data || '{}')
 
 	return (
 		<div className="flex flex-row justify-center w-full">
@@ -55,21 +54,21 @@ const TeacherSelectMessage: FC<ChatMessage & ComponentMessageProps> = ({ comp_da
 						<DialogTrigger className="w-full mt-3">
 							<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">ค้นหาคุณครู</Button>
 						</DialogTrigger>
-						<DialogContent className="bg-white">
+						<DialogContent className="bg-white p-3">
 							<DialogHeader>
 								<DialogTitle>
 									<p className="text-lg">งานสอน {comp_data_obj?.order_id}</p>
 								</DialogTitle>
 								<DialogDescription className="flex flex-col text-center gap-3">
-									{cadidateTeacherList?.length > 0 ? (
-										<div>
-											{cadidateTeacherList?.map((teacher) => (
-												<TeacherProfile key={teacher.tid} {...teacher} />
+									{query.isSuccess && (
+										<div className="flex flex-col gap-3">
+											{query.data?.map((teacher: Teacher) => (
+												<TeacherProfile key={teacher.tid} dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} orderId={comp_data_obj?.order_id} {...teacher} />
 											))}
 										</div>
-									) : (
-										<p>--- ไม่พบคุณครู ---</p>
 									)}
+									{query.isLoading && <Card className="p-3">กำลังโหลดข้อมูล...</Card>}
+									{query.isError && <Card className="border-red-500 bg-red-100 p-3">เกิดข้อผิดพลาดในการโหลดข้อมูลครู {query.error.message}</Card>}
 								</DialogDescription>
 							</DialogHeader>
 						</DialogContent>
@@ -80,7 +79,19 @@ const TeacherSelectMessage: FC<ChatMessage & ComponentMessageProps> = ({ comp_da
 	)
 }
 
-const TeacherProfile: FC<Teacher> = ({ profile, background }) => {
+const TeacherProfile: FC<Teacher & { orderId: string; dataBaseApiUrl: string; authToken: string }> = ({ dataBaseApiUrl, authToken, tid, orderId, profile, background }) => {
+	// Access the client
+	const queryClient = useQueryClient()
+
+	// Mutations
+	const mutation = useMutation({
+		mutationFn: (variables: { teacher_id: string; order_id: string }) => putCandidateTeacherToOrder(dataBaseApiUrl, authToken, variables),
+		onSuccess: () => {
+			// Invalidate and refetch
+			queryClient.invalidateQueries({ queryKey: ['candidate-teacher-select'] })
+		}
+	})
+
 	return (
 		<Card className="p-3">
 			<div className="flex flex-row items-center justify-between gap-3">
@@ -111,12 +122,26 @@ const TeacherProfile: FC<Teacher> = ({ profile, background }) => {
 						</Dialog>
 					</div>
 				</div>
-				<DialogClose>
-					<Button variant="outline" className="border-indigo-500 text-indigo-500 hover:bg-indigo-100">
-						เลือก
-					</Button>
-				</DialogClose>
+				<Button
+					onClick={() => {
+						mutation.mutate({
+							teacher_id: tid,
+							order_id: orderId
+						})
+					}}
+					variant="outline"
+					className="border-indigo-500 text-indigo-500 hover:bg-indigo-100"
+				>
+					{mutation.isPending ? 'กำลังเลือก...' : 'เลือกครู'}
+				</Button>
 			</div>
+			{mutation.isError && (
+				<Card className="p-3 my-3 rounded-none border-red-500 bg-red-100">
+					<div className="text-red-500 flex flex-row items-center gap-3">
+						<IconAlertCircle /> {mutation.error.message}
+					</div>
+				</Card>
+			)}
 		</Card>
 	)
 }
@@ -263,7 +288,7 @@ const TeacherEvaluateMessage = () => {
 									</div>
 								</div>
 							</DialogHeader>
-							<DialogFooter className="mt-3">
+							<DialogFooter className="mt-3 flex flex-row gap-3 ">
 								<DialogClose asChild>
 									<Button className="bg-gray-500 hover:bg-gray-400 w-[50%] text-white" type="button">
 										ยกเลิก

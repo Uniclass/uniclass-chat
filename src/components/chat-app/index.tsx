@@ -1,10 +1,12 @@
-import { fetchUserProfileList } from '@/common/api/chat'
+import { fetchUserProfileList } from '@/common/api/chat.api'
 import { useChatRoomStore } from '@/store/use-chat-room-store'
 import { useChatStore } from '@/store/use-chat-store'
 import { FC, useEffect, useState } from 'react'
 import { ChatRoom } from '../chat-room'
 import { ChatRoomDetail } from '../chat-room-detail'
 import { ChatRoomMenu } from '../chat-room-menu'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 type ChatAppProps = {
 	socketApiUrl: string
@@ -12,6 +14,8 @@ type ChatAppProps = {
 	authToken: string
 	userId: string
 }
+
+const queryClient = new QueryClient()
 
 export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authToken, userId }) => {
 	const [selectedTab, setSelectedTab] = useState(0)
@@ -57,38 +61,42 @@ export const ChatApp: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUrl, authTo
 	}, [connectWebSocket, fetchChatRoom, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket])
 
 	return (
-		<div data-testid="chat-app" className="flex flex-row w-full relative">
-			<ChatRoomMenu
-				roomMenuOpen={roomMenuOpen}
-				setRoomMenuOpen={setRoomMenuOpen}
-				selectedTab={selectedTab}
-				setSelectedTab={setSelectedTab}
-				userProfiles={userProfiles}
-				chatRoom={chatRoom}
-				dataBaseApiUrl={dataBaseApiUrl}
-				authToken={authToken}
-				userId={userId}
-			/>
+		<QueryClientProvider client={queryClient}>
+			<div data-testid="chat-app" className="flex flex-row w-full relative">
+				<ChatRoomMenu
+					roomMenuOpen={roomMenuOpen}
+					setRoomMenuOpen={setRoomMenuOpen}
+					selectedTab={selectedTab}
+					setSelectedTab={setSelectedTab}
+					userProfiles={userProfiles}
+					chatRoom={chatRoom}
+					dataBaseApiUrl={dataBaseApiUrl}
+					authToken={authToken}
+					userId={userId}
+				/>
 
-			{chatRoom.map((room: ChatRoom, index: number) => (
-				<div key={room.room_id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
-					<div className="flex flex-row ">
-						<ChatRoom
-							dataBaseApiUrl={dataBaseApiUrl}
-							authToken={authToken}
-							currentRoom={room}
-							roomId={room.room_id}
-							userId={userId}
-							socketStatus={socketStatus}
-							setRoomMenuOpen={setRoomMenuOpen}
-							roomMenuOpen={roomMenuOpen}
-							sideMenuOpen={sideMenuOpen}
-							setSideMenuOpen={setSideMenuOpen}
-						/>
-						<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
+				{chatRoom.map((room: ChatRoom, index: number) => (
+					<div key={room.room_id} className={`w-full  ${selectedTab === index ? 'block' : 'hidden'}`}>
+						<div className="flex flex-row ">
+							<ChatRoom
+								dataBaseApiUrl={dataBaseApiUrl}
+								authToken={authToken}
+								socketApiUrl={socketApiUrl}
+								currentRoom={room}
+								roomId={room.room_id}
+								userId={userId}
+								socketStatus={socketStatus}
+								setRoomMenuOpen={setRoomMenuOpen}
+								roomMenuOpen={roomMenuOpen}
+								sideMenuOpen={sideMenuOpen}
+								setSideMenuOpen={setSideMenuOpen}
+							/>
+							<ChatRoomDetail dataBaseApiUrl={dataBaseApiUrl} authToken={authToken} roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
+						</div>
 					</div>
-				</div>
-			))}
-		</div>
+				))}
+			</div>
+			<ReactQueryDevtools />
+		</QueryClientProvider>
 	)
 }

@@ -1,4 +1,4 @@
-import { fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList } from '@/common/api/chat'
+import { fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList } from '@/common/api/chat.api'
 import { create } from 'zustand'
 
 type StoreState = {
@@ -14,8 +14,8 @@ type StoreActions = {
 	connectWebSocket: (dataBaseApiUrl: string, socketApiUrl: string, authToken: string) => void
 	disconnectWebSocket: () => void
 	sendMessage: (dataBaseApiUrl: string, authToken: string, data: ChatMessage, room_id: string) => void
-	fetchChatMessage: (dataBaseApiUrl: string, authToken: string, room_id: string, ts_st: string, ts_en: string) => void
-	fetchUserProfile: (dataBaseApiUrl: string, authToken: string, room_Id: string) => void
+	// fetchChatMessage: (dataBaseApiUrl: string, authToken: string, room_id: string, ts_st: string, ts_en: string) => void
+	// fetchUserProfile: (dataBaseApiUrl: string, authToken: string, room_Id: string) => void
 	updateLatestMessage: (roomId: string) => void
 }
 
@@ -97,43 +97,43 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	},
 
 	// Fetch chat messages from API
-	fetchChatMessage: async (dataBaseApiUrl, authToken, room_id, ts_st, ts_en) => {
-		try {
-			const message = (await fetchChatMessage(dataBaseApiUrl, authToken, room_id, ts_st, ts_en)) as ChatMessage[]
+	// fetchChatMessage: async (dataBaseApiUrl, authToken, room_id, ts_st, ts_en) => {
+	// 	try {
+	// 		const message = (await fetchChatMessage(dataBaseApiUrl, authToken, room_id, ts_st, ts_en)) as ChatMessage[]
 
-			set((state) => {
-				const existingMessages = state.rooms[room_id] || []
-				const newMessages = [...existingMessages, ...message]
+	// 		set((state) => {
+	// 			const existingMessages = state.rooms[room_id] || []
+	// 			const newMessages = [...existingMessages, ...message]
 
-				const uniqueMessages = newMessages.reduce((acc: ChatMessage[], current: ChatMessage) => {
-					const index = acc.findIndex((msg) => msg.id === current.id) // Assuming each message has a unique 'id' property
-					if (index < 0) {
-						acc.push(current)
-					}
-					return acc
-				}, [])
+	// 			const uniqueMessages = newMessages.reduce((acc: ChatMessage[], current: ChatMessage) => {
+	// 				const index = acc.findIndex((msg) => msg.id === current.id) // Assuming each message has a unique 'id' property
+	// 				if (index < 0) {
+	// 					acc.push(current)
+	// 				}
+	// 				return acc
+	// 			}, [])
 
-				return {
-					rooms: {
-						...state.rooms,
-						[room_id]: uniqueMessages
-					}
-				}
-			})
-		} catch (err) {
-			console.log(err)
-		}
-	},
+	// 			return {
+	// 				rooms: {
+	// 					...state.rooms,
+	// 					[room_id]: uniqueMessages
+	// 				}
+	// 			}
+	// 		})
+	// 	} catch (err) {
+	// 		console.log(err)
+	// 	}
+	// },
 
 	// Fetch User Profile From API
-	fetchUserProfile: async (dataBaseApiUrl, authToken, room_Id) => {
-		try {
-			const profile = await fetchUserProfileList(dataBaseApiUrl, authToken, room_Id)
-			set({ profile })
-		} catch (err) {
-			console.log(err)
-		}
-	},
+	// fetchUserProfile: async (dataBaseApiUrl, authToken, room_Id) => {
+	// 	try {
+	// 		const profile = await fetchUserProfileList(dataBaseApiUrl, authToken, room_Id)
+	// 		set({ profile })
+	// 	} catch (err) {
+	// 		console.log(err)
+	// 	}
+	// },
 
 	updateLatestMessage: (roomId) => {
 		const { notiLatestMessages } = get()

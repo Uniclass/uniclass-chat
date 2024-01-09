@@ -1,4 +1,4 @@
-import { fetchChatRoomDetail } from '@/common/api/chat'
+import { fetchChatRoomDetail } from '@/common/api/chat.api'
 import { cn } from '@/lib/utils'
 import { Transition } from '@headlessui/react'
 import { IconX } from '@tabler/icons-react'

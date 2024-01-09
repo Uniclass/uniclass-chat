@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
 	args: {
 		student: {
-			sid: 'STD0002',
+			sid: 'STA0002',
 			title: 'นักเรียน',
 			firstname: 'นักเรียน',
 			lastname: 'นักเรียน',
