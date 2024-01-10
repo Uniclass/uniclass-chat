@@ -27,8 +27,8 @@ export const ChatAppComponent: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUr
 
 	// if mobile set default to false
 	const isMobile = window.innerWidth <= 768 // Adjust the value as needed
-	const [roomMenuOpen, setRoomMenuOpen] = useState(isMobile)
-	const [sideMenuOpen, setSideMenuOpen] = useState(isMobile)
+	const [roomMenuOpen, setRoomMenuOpen] = useState(!isMobile)
+	const [sideMenuOpen, setSideMenuOpen] = useState(!isMobile)
 
 	useEffect(() => {
 		connectWebSocket(dataBaseApiUrl, socketApiUrl, authToken, queryClient)

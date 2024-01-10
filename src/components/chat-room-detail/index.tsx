@@ -11,6 +11,7 @@ import { ClassSchedule } from './class-schedule'
 import { CourseDetail } from './course-detail'
 import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
+import { ScrollArea } from '../ui/scroll-area'
 
 type ChatRoomDetailProps = {
 	roomId: string
@@ -59,7 +60,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 				leaveTo={cn('opacity-0', isMobile ? 'translate-x-10' : '-translate-x-10')}
 			>
 				<div className={cn('bg-white', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')} onClick={() => setSideMenuOpen(false)}>
-					<div className="min-w-[300px] h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
+					<ScrollArea className="min-w-[300px] h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
 						{isMobile && (
 							<Button className="p-2 my-2" variant="ghost">
 								<IconX className="active:translate-y-[1px]" size={24} onClick={() => setSideMenuOpen(false)} />
@@ -84,7 +85,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 						</ErrorBoundary>
 						{/* <StudentDetail /> */}
 						{/* <StudentDetail student={chatRoomDetail.student} /> */}
-					</div>
+					</ScrollArea>
 				</div>
 			</Transition>
 		)

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ChatAppProvider } from '.'
+import { ChatApp } from '.'
 
-const meta: Meta<typeof ChatAppProvider> = {
-	title: 'Components/ChatAppProvider',
-	component: ChatAppProvider,
+const meta: Meta<typeof ChatApp> = {
+	title: 'Components/ChatApp',
+	component: ChatApp,
 	parameters: {
 		// layout: 'centered'
 		// layout: 'fullscreen'
