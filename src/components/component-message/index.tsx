@@ -1,5 +1,4 @@
 import { getCandidateTeacherList, putCandidateTeacherToOrder } from '@/common/api/chat.api'
-import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { IconAlertCircle, IconSquareCheck } from '@tabler/icons-react'
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { FC } from 'react'
@@ -9,6 +8,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import Card from '../ui/card'
 import Dialog from '../ui/dialog'
+import Avatar from '../ui/avatar'
 
 type ComponentMessageProps = {
 	authToken: string
@@ -97,7 +97,8 @@ const TeacherProfile: FC<Teacher & { orderId: string; dataBaseApiUrl: string; au
 			<div className="flex flex-row items-center justify-between gap-3">
 				<div className="flex flex-row gap-3">
 					<Avatar>
-						<AvatarImage className="w-[60px]" src={profile.photo_url} alt={profile.title} />
+						<Avatar.Image className="w-[60px]" src={profile.photo_url} alt={profile.title} />
+						<Avatar.Fallback>{profile.firstname[0]}</Avatar.Fallback>
 					</Avatar>
 					<div className="flex flex-col items-start">
 						<p>({profile.title})</p>
@@ -209,10 +210,11 @@ const TeacherEvaluateMessage = () => {
 				<Card.Content className="flex flex-col gap-4 p-4">
 					<div className="bg-white p-3 rounded-md shadow-lg flex flex-row gap-3 items-center">
 						<Avatar>
-							<AvatarImage
+							<Avatar.Image
 								className="w-[40px] h-[40px] rounded-md"
 								src="https://qph.cf2.poecdn.net/main-sdxl_c779e89a8682d57bd1dbcd0111bceb50959a002a2424b1a98f519a35db28e2fc.png?w=1024&h=1024"
 							/>
+							<Avatar.Fallback>Class Room Image</Avatar.Fallback>
 						</Avatar>
 						<div className="flex flex-col">
 							<p>คณิตศาสตร์ ป.1</p>

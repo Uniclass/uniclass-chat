@@ -1,5 +1,4 @@
-import { Avatar } from '@/components/ui/avatar'
-import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import Avatar from '@/components/ui/avatar'
 import { FC } from 'react'
 import Card from '../../ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -15,11 +14,11 @@ export const CourseDetail: FC<CourseDetailProps> = ({ order: { course_name }, te
 		<Card className="relative bg-white rounded-none w-full">
 			<div className="flex flex-row gap-3 p-3">
 				<Avatar className="w-[70px] h-[70px] rounded-md">
-					<AvatarImage
+					<Avatar.Image
 						className="w-[70px] h-[70px]"
 						src={'https://qph.cf2.poecdn.net/main-sdxl_c779e89a8682d57bd1dbcd0111bceb50959a002a2424b1a98f519a35db28e2fc.png?w=1024&h=1024'}
 					/>
-					<AvatarFallback>{course_name}</AvatarFallback>
+					<Avatar.Fallback>{course_name}</Avatar.Fallback>
 				</Avatar>
 				<div>
 					<div className="flex flex-row gap-1">

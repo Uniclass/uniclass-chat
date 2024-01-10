@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { IconPhoneCall } from '@tabler/icons-react'
 import { FC } from 'react'
-import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
+import Avatar from '../../ui/avatar'
 import Card from '../../ui/card'
 
 type TeacherDetailProps = {
@@ -21,11 +21,11 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = tru
 				<div className="flex flex-row justify-between w-full">
 					<div className="flex flex-row items-center gap-3">
 						<Avatar className="border-orange-400 border-2">
-							<AvatarImage src={teacher.photo_url} alt={teacher.firstname} />
-							<AvatarFallback>
+							<Avatar.Image src={teacher.photo_url} alt={teacher.firstname} />
+							<Avatar.Fallback>
 								{teacher.firstname[0]}
 								{teacher.lastname[0]}
-							</AvatarFallback>
+							</Avatar.Fallback>
 						</Avatar>
 						<div className="flex flex-col mr-2">
 							<div className="flex flex-col">

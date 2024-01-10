@@ -5,7 +5,7 @@ import { IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { FC, Fragment, useEffect, useState } from 'react'
 import { useAppContext } from '../app-provider'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import Avatar from '../ui/avatar'
 import { Button } from '../ui/button'
 
 type ChatRoomMenuProps = {
@@ -103,8 +103,8 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 			}}
 		>
 			<Avatar>
-				<AvatarImage src={userProfiles.data?.[index]?.photo_url} />
-				<AvatarFallback>{userProfiles.data?.[index]?.firstname}</AvatarFallback>
+				<Avatar.Image src={userProfiles.data?.[index]?.photo_url} />
+				<Avatar.Fallback>{userProfiles.data?.[index]?.firstname}</Avatar.Fallback>
 			</Avatar>
 			<div className="flex flex-row items-center">
 				<div className="flex flex-col items-start">

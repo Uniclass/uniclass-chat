@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import Card from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import Avatar from '@/components/ui/avatar'
 import { IconPhoneCall } from '@tabler/icons-react'
 import { FC } from 'react'
 
@@ -16,11 +16,11 @@ export const StudentDetail: FC<StudentDetailProps> = ({ student: { phone, photo_
 				<div className="flex flex-row justify-between w-full">
 					<div className="flex flex-row gap-3">
 						<Avatar className="border-orange-400 border-2">
-							<AvatarImage src={photo_url} alt={firstname} />
-							<AvatarFallback>
+							<Avatar.Image src={photo_url} alt={firstname} />
+							<Avatar.Fallback>
 								{firstname[0]}
 								{lastname[0]}
-							</AvatarFallback>
+							</Avatar.Fallback>
 						</Avatar>
 						<div className="flex flex-col mr-2">
 							<div className="flex flex-col">

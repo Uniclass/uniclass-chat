@@ -9,7 +9,7 @@ import { useAppContext } from '../app-provider'
 import { ComponentMessage } from '../component-message'
 import { NotificationMessage } from '../server-noti-message'
 import { SocketBadgeStatus } from '../socket-badge-status'
-import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import Avatar from '../ui/avatar'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
@@ -134,8 +134,8 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 								<div className={cn('flex items-end gap-2', message.sender_id === userId ? 'flex-row-reverse' : 'flex-row')}>
 									{profileQuery.isSuccess && (
 										<Avatar>
-											<AvatarImage src={getProfile(message.sender_id)?.photo_url} />
-											<AvatarFallback>{getProfile(message.sender_id)?.firstname}</AvatarFallback>
+											<Avatar.Image src={getProfile(message.sender_id)?.photo_url} />
+											<Avatar.Fallback>{getProfile(message.sender_id)?.firstname}</Avatar.Fallback>
 										</Avatar>
 									)}
 									<div
@@ -150,6 +150,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 					))}
 				<div ref={messagesEndRef} />
 			</ScrollArea>
+			{currentRoom.room_status === false && <div className="p-3 w-full text-center bg-gray-100">คอร์สเรียนจบแล้ว</div>}
 			<form onSubmit={form.onSubmit(onSubmit)} className="p-3 space-y-2">
 				<div className="flex flex-row gap-1">
 					<Input data-testid="message-input" placeholder="Aa" {...form.getInputProps('message')} />
