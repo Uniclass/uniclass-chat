@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { IconInfoSquare, IconSquareCheck, IconSquareX } from '@tabler/icons-react'
 import { FC } from 'react'
-import { Card, CardContent } from '../ui/card'
+import Card from '../ui/card'
 
 export const NotificationMessage: FC<ChatMessage> = ({ comp_type, content }) => {
 	const iconSize = 28
@@ -32,9 +32,9 @@ export const NotificationMessage: FC<ChatMessage> = ({ comp_type, content }) => 
 		<div className="flex flex-row justify-center w-full">
 			<Card className={cn('rounded-2xl flex items-center flex-row pl-4 border-2', borderColor, bgColor)}>
 				<div>{icon}</div>
-				<CardContent className="flex flex-row gap-4 p-4">
+				<Card.Content className="flex flex-row gap-4 p-4">
 					<div>{content}</div>
-				</CardContent>
+				</Card.Content>
 			</Card>
 		</div>
 	)

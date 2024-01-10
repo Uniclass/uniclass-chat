@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Card, CardContent, CardHeader } from '../../ui/card'
+import Card from '../../ui/card'
 import { IconCircleCheckFilled, IconWashDryclean } from '@tabler/icons-react'
 import { Badge } from '@/components/ui/badge'
 
@@ -56,10 +56,10 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 
 	return (
 		<Card className="rounded-none bg-white w-full">
-			<CardHeader className=" px-3 pt-3 pb-0">
+			<Card.Header className=" px-3 pt-3 pb-0">
 				<p className="text-lg font-bold">สถานะ</p>
-			</CardHeader>
-			<CardContent className="p-3 flex flex-row justify-between">
+			</Card.Header>
+			<Card.Content className="p-3 flex flex-row justify-between">
 				<div>
 					<div className="flex flex-row gap-3 items-center">
 						{statusGroup.hasTeacher ? <IconCircleCheckFilled size={30} className="text-orange-500" /> : <IconWashDryclean size={30} className="text-orange-500" />}
@@ -81,7 +81,7 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 						ดูรายละเอียด
 					</Badge>
 				</div>
-			</CardContent>
+			</Card.Content>
 		</Card>
 	)
 }

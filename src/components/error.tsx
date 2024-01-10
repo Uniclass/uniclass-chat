@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Card } from './ui/card'
+import Card from './ui/card'
 import { IconAlertTriangle } from '@tabler/icons-react'
 
 type ErrorProps = {

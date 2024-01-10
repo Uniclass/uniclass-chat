@@ -1,13 +1,12 @@
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import Dialog from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { IconPhoneCall } from '@tabler/icons-react'
 import { FC } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
-import { Card, CardContent } from '../../ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { DialogClose, DialogFooter, DialogHeader } from '@/components/ui/dialog'
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import Card from '../../ui/card'
 
 type TeacherDetailProps = {
 	teacher: ChatRoomDetail['teacher']
@@ -17,7 +16,7 @@ type TeacherDetailProps = {
 export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = true }) => {
 	return (
 		<Card className="rounded-none bg-white w-full">
-			<CardContent className="p-3">
+			<Card.Content className="p-3">
 				{/* TEACHER PHOTO URL */}
 				<div className="flex flex-row justify-between w-full">
 					<div className="flex flex-row items-center gap-3">
@@ -58,18 +57,18 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = tru
 				</div>
 				<Dialog>
 					{hasButton && (
-						<DialogTrigger className="w-full mt-3">
+						<Dialog.Trigger className="w-full mt-3">
 							<Button className="w-full text-white bg-orange-500 hover:bg-orange-400">เปลี่ยนครู</Button>
-						</DialogTrigger>
+						</Dialog.Trigger>
 					)}
-					<DialogContent className="bg-white">
-						<DialogHeader>
-							<DialogTitle>
+					<Dialog.Content className="bg-white">
+						<Dialog.Header>
+							<Dialog.Title>
 								<p className="text-xl">
 									เปลี่ยนครู {teacher.firstname} {teacher.lastname} ({teacher.title})
 								</p>
-							</DialogTitle>
-							<DialogDescription className="flex flex-col gap-3">
+							</Dialog.Title>
+							<Dialog.Description className="flex flex-col gap-3">
 								<p>
 									ท่านต้องการเปลี่ยนครู {teacher.firstname} {teacher.lastname} หรือไม่?
 								</p>
@@ -77,23 +76,23 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = tru
 									<Label>หมายเหตุ</Label>
 									<Input placeholder="กรอกเหตุผลที่ต้องการเปลี่ยนครู" />
 								</div>
-							</DialogDescription>
-						</DialogHeader>
-						<DialogFooter className="mt-3">
-							<DialogClose asChild>
+							</Dialog.Description>
+						</Dialog.Header>
+						<Dialog.Footer className="mt-3">
+							<Dialog.Close asChild>
 								<Button className="bg-gray-500 hover:bg-gray-400 w-[50%] text-white" type="button">
 									ยกเลิก
 								</Button>
-							</DialogClose>
-							<DialogClose asChild>
+							</Dialog.Close>
+							<Dialog.Close asChild>
 								<Button className="bg-red-500 hover:bg-red-400 w-[50%] text-white" type="submit">
 									ยืนยัน
 								</Button>
-							</DialogClose>
-						</DialogFooter>
-					</DialogContent>
+							</Dialog.Close>
+						</Dialog.Footer>
+					</Dialog.Content>
 				</Dialog>
-			</CardContent>
+			</Card.Content>
 		</Card>
 	)
 }

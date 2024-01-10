@@ -5,16 +5,17 @@ import { useForm, zodResolver } from '@mantine/form'
 import { IconAlertCircle, IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FC, useEffect, useRef } from 'react'
-import * as z from 'zod'
 import { useAppContext } from '../app-provider'
 import { ComponentMessage } from '../component-message'
 import { NotificationMessage } from '../server-noti-message'
 import { SocketBadgeStatus } from '../socket-badge-status'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
-import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
+
+import * as z from 'zod'
+import Card from '../ui/card'
 
 const formSchema = z.object({
 	message: z.string().min(1, { message: 'ต้องมีอย่างน้อย 1 ตัวอักษร' }).max(50, { message: 'ต้องมีไม่เกิน 50 ตัวอักษร' })
@@ -105,15 +106,15 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 
 	return (
 		<Card className="flex flex-col  relative rounded-none h-[90vh] w-full z-10 bg-white" key={roomId}>
-			<CardHeader className="flex items-center border-b-[1px]">
-				<CardTitle className="max-w-[70%] text-center text-xl">
+			<Card.Header className="flex items-center border-b-[1px]">
+				<Card.Title className="max-w-[70%] text-center text-xl">
 					{currentRoom.room_name} ({currentRoom.room_id})
-				</CardTitle>
-				<CardDescription>
+				</Card.Title>
+				<Card.Description>
 					{profileQuery.isSuccess && profileQuery.data[0]?.firstname} {profileQuery.isSuccess && profileQuery.data[0]?.lastname}
-				</CardDescription>
+				</Card.Description>
 				<SocketBadgeStatus socketStatus={socketStatus} />
-			</CardHeader>
+			</Card.Header>
 			<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
 			<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />
 			<ScrollArea className="px-3 h-full">

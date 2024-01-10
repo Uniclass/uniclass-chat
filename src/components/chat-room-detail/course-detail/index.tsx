@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/ui/avatar'
 import { AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { FC } from 'react'
-import { Card, CardContent } from '../../ui/card'
+import Card from '../../ui/card'
 import { Badge } from '@/components/ui/badge'
 
 type CourseDetailProps = {
@@ -34,9 +34,9 @@ export const CourseDetail: FC<CourseDetailProps> = ({ order: { course_name }, te
 					</div>
 				</div>
 			</div>
-			<CardContent className="p-3">
+			<Card.Content className="p-3">
 				<div>{course_name}</div>
-			</CardContent>
+			</Card.Content>
 			<div className="flex flex-row w-full justify-end p-3">
 				<Badge className="p-2 px-4 cursor-pointer hover:brightness-90 select-none  active:translate-y-[1px]" variant="secondary">
 					ดูรายละเอียด

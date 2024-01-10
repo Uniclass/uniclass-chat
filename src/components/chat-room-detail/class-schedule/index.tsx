@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import Card from '@/components/ui/card'
 import { IconBook } from '@tabler/icons-react'
 import { FC, useEffect, useState } from 'react'
 
@@ -27,16 +27,16 @@ export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, or
 	}
 	return (
 		<Card className="relative bg-white rounded-none w-full p-0">
-			<CardHeader className="p-3">
+			<Card.Header className="p-3">
 				<p className="text-lg font-bold">การเรียน</p>
 				<p className="text-lg font-normal">
 					Class Schedule:
 					<span className="text-orange-400 ml-1">{classStatus}</span>
 				</p>
-			</CardHeader>
-			<CardContent className="p-3">
+			</Card.Header>
+			<Card.Content className="p-3">
 				<ScheduleInfo course_name={course_name} time={time || '00:00:00'} />
-			</CardContent>
+			</Card.Content>
 		</Card>
 	)
 }

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import Card from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { IconPhoneCall } from '@tabler/icons-react'
 import { FC } from 'react'
@@ -11,7 +11,7 @@ type StudentDetailProps = {
 export const StudentDetail: FC<StudentDetailProps> = ({ student: { phone, photo_url, firstname, lastname, title } }) => {
 	return (
 		<Card className="rounded-none bg-white w-full">
-			<CardContent className="p-3">
+			<Card.Content className="p-3">
 				{/* TEACHER PHOTO URL */}
 				<div className="flex flex-row justify-between w-full">
 					<div className="flex flex-row gap-3">
@@ -50,7 +50,7 @@ export const StudentDetail: FC<StudentDetailProps> = ({ student: { phone, photo_
 						</div>
 					</div>
 				</div>
-			</CardContent>
+			</Card.Content>
 		</Card>
 	)
 }
