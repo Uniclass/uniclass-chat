@@ -24,12 +24,17 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 
 	const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null)
 
-	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200)
 
 	useEffect(() => {
 		const handleResize = () => {
-			setIsMobile(window.innerWidth <= 720)
-			setSideMenuOpen(false)
+			if (window.innerWidth <= 1200) {
+				setIsMobile(true)
+				setSideMenuOpen(false)
+			} else {
+				setIsMobile(false)
+				setSideMenuOpen(true)
+			}
 		}
 
 		window.addEventListener('resize', handleResize)

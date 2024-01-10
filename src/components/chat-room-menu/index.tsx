@@ -17,12 +17,17 @@ type ChatRoomMenuProps = {
 }
 
 export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuOpen, chatRoom, selectedTab, setSelectedTab }) => {
-	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200)
 
 	useEffect(() => {
 		const handleResize = () => {
-			setIsMobile(window.innerWidth <= 720)
-			setRoomMenuOpen(false)
+			if (window.innerWidth <= 1200) {
+				setIsMobile(true)
+				setRoomMenuOpen(false)
+			} else {
+				setIsMobile(false)
+				setRoomMenuOpen(true)
+			}
 		}
 
 		window.addEventListener('resize', handleResize)
