@@ -16,28 +16,8 @@ describe('ChatRoomMenu', () => {
 		const selectedTab = 0
 		const index = 0
 		const setSelectedTab = () => {}
-		const removeLatestMessage = () => {}
-		const userProfiles = [{ firstname: 'John', lastname: 'Doe', photo_url: 'https://example.com/john.jpg' }]
-		const latestMessage: ChatMessage = {
-			room_id: '1',
-			type: 'MSG',
-			sender_type: 'TCA',
-			sender_id: 'TCA0002',
-			content: 'TEST'
-		}
 
-		render(
-			<ChatRoomItem
-				room={room}
-				selectedTab={selectedTab}
-				index={index}
-				setSelectedTab={setSelectedTab}
-				removeLatestMessage={removeLatestMessage}
-				userProfiles={userProfiles}
-				latestMessage={latestMessage}
-				getNotiLatestMessage={() => false}
-			/>
-		)
+		render(<ChatRoomItem room={room} selectedTab={selectedTab} index={index} setSelectedTab={setSelectedTab} />)
 
 		expect(screen.getByTestId('latest-message')).toHaveTextContent('TEST')
 	})
@@ -55,29 +35,9 @@ describe('ChatRoomMenu', () => {
 		const selectedTab = 0
 		const index = 1
 		const setSelectedTab = () => {}
-		const removeLatestMessage = () => {}
-		const userProfiles = [{ firstname: 'John', lastname: 'Doe', photo_url: 'https://example.com/john.jpg' }]
-		const latestMessage: ChatMessage = {
-			room_id: '1',
-			type: 'MSG',
-			sender_type: 'TCA',
-			sender_id: 'TCA0002',
-			content: 'TEST'
-		}
 
 		// Render the component
-		render(
-			<ChatRoomItem
-				room={room}
-				selectedTab={selectedTab}
-				index={index}
-				setSelectedTab={setSelectedTab}
-				removeLatestMessage={removeLatestMessage}
-				userProfiles={userProfiles}
-				latestMessage={latestMessage}
-				getNotiLatestMessage={() => true}
-			/>
-		)
+		render(<ChatRoomItem room={room} selectedTab={selectedTab} index={index} setSelectedTab={setSelectedTab} />)
 
 		const notificationDiv = screen.getByTestId('notification-div')
 		expect(notificationDiv).toBeInTheDocument()
