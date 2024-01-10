@@ -1,9 +1,10 @@
 import { fetchChatMessage, fetchUserProfileList, sendChatMessage } from '@/common/api/chat.api'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
+import { useForm, zodResolver } from '@mantine/form'
 import { IconAlertCircle, IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FC, useCallback, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import * as z from 'zod'
 import { useAppContext } from '../app-provider'
 import { ComponentMessage } from '../component-message'
@@ -12,10 +13,8 @@ import { SocketBadgeStatus } from '../socket-badge-status'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card'
-import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
-import { useForm, zodResolver } from '@mantine/form'
 
 const formSchema = z.object({
 	message: z.string().min(1, { message: 'ต้องมีอย่างน้อย 1 ตัวอักษร' }).max(50, { message: 'ต้องมีไม่เกิน 50 ตัวอักษร' })
@@ -38,38 +37,31 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 	const { socketStatus, sendSocketMessage } = useChatStore()
 	const messagesEndRef = useRef(null)
 
-	const _st_time = new Date().toISOString()
-	const _ed_time = '2023-12-20T09:32:13.000Z'
-
-	const fetchMessages = useCallback(() => fetchChatMessage(dataBaseApiUrl, authToken, roomId, _st_time, _ed_time), [dataBaseApiUrl, authToken, roomId, _st_time])
-	const fetchProfiles = useCallback(() => fetchUserProfileList(dataBaseApiUrl, authToken, roomId), [dataBaseApiUrl, authToken, roomId])
-
-	const messageQuery = useQuery({ queryKey: ['chat-message', roomId], queryFn: fetchMessages })
-	const profileQuery = useQuery({ queryKey: ['user-profile'], queryFn: fetchProfiles })
-
-	const sendMessage = useCallback(
-		async (variables: { msgData: ChatMessage; roomId: string }) => {
-			sendChatMessage(dataBaseApiUrl, authToken, variables.msgData, variables.roomId)
-			sendSocketMessage(variables.msgData)
-		},
-		[dataBaseApiUrl, authToken, sendSocketMessage]
-	)
-
-	const messageMutation = useMutation({
-		mutationKey: ['send-message'],
-		mutationFn: sendMessage,
-		onSettled: () => {
-			setTimeout(() => {
-				queryClient.invalidateQueries({ queryKey: ['chat-message', roomId] })
-				queryClient.invalidateQueries({ queryKey: ['latest-message', roomId] })
-			}, 3000)
-		}
+	const messageQuery = useQuery({
+		queryKey: ['chat-message', roomId],
+		queryFn: () => fetchChatMessage(dataBaseApiUrl, authToken, roomId, new Date().toISOString(), '2023-12-20T09:32:13.000Z')
 	})
 
 	const form = useForm({
 		validate: zodResolver(formSchema),
 		initialValues: {
 			message: ''
+		}
+	})
+
+	const profileQuery = useQuery({ queryKey: ['user-profile'], queryFn: () => fetchUserProfileList(dataBaseApiUrl, authToken, roomId) })
+
+	const messageMutation = useMutation({
+		mutationKey: ['send-message'],
+		mutationFn: async (variables: { msgData: ChatMessage; roomId: string }) => {
+			sendChatMessage(dataBaseApiUrl, authToken, variables.msgData, variables.roomId)
+			sendSocketMessage(variables.msgData)
+		},
+		onSettled: () => {
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['chat-message', roomId] })
+				queryClient.invalidateQueries({ queryKey: ['latest-message', roomId] })
+			}, 1000)
 		}
 	})
 
@@ -101,7 +93,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 		const teacher_id = profileQuery.data[0].teacher_id
 		const isTeacher = userId === teacher_id
 
-		const profile = isTeacher ? profileQuery.data[1] : profileQuery.data[0]
+		const profile = isTeacher ? profileQuery.data[0] : profileQuery.data[1]
 
 		return profile
 	}
