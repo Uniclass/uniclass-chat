@@ -7,6 +7,8 @@ import { FC, Fragment, useEffect, useState } from 'react'
 import { useAppContext } from '../app-provider'
 import Avatar from '../ui/avatar'
 import { Button } from '../ui/button'
+import { useChatStore } from '@/store/use-chat-store'
+import { ScrollArea } from '../ui/scroll-area'
 
 type ChatRoomMenuProps = {
 	roomMenuOpen: boolean
@@ -56,19 +58,21 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 			leaveFrom="opacity-100 translate-x-0"
 			leaveTo={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}
 		>
-			<div className={cn('flex flex-col bg-white border-y border-l h-[90vh]', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')}>
-				{isMobile && (
-					<Button className="p-2 my-2 w-fit ml-auto" variant="ghost">
-						<IconX className="active:translate-y-[1px]" size={24} onClick={() => setRoomMenuOpen(false)} />
-					</Button>
-				)}
-				{chatRoom.map((room: ChatRoom, index: number) => {
-					return (
-						<div key={room.room_id}>
-							<ChatRoomItem room={room} selectedTab={selectedTab} index={index} setSelectedTab={setSelectedTab} />
-						</div>
-					)
-				})}
+			<div className={cn('flex flex-col  bg-white border-y border-l h-[90vh]', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')}>
+				<ScrollArea>
+					{isMobile && (
+						<Button className="p-2 my-2 w-fit ml-auto" variant="ghost">
+							<IconX className="active:translate-y-[1px]" size={24} onClick={() => setRoomMenuOpen(false)} />
+						</Button>
+					)}
+					{chatRoom.map((room: ChatRoom, index: number) => {
+						return (
+							<div key={room.room_id}>
+								<ChatRoomItem room={room} selectedTab={selectedTab} index={index} setSelectedTab={setSelectedTab} />
+							</div>
+						)
+					})}
+				</ScrollArea>
 			</div>
 		</Transition>
 	)
@@ -82,6 +86,7 @@ type ChatRoomItemProps = {
 }
 
 export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab }) => {
+	const { notiLatestMessages } = useChatStore()
 	const { dataBaseApiUrl, authToken } = useAppContext()
 
 	const userProfiles = useQuery({
@@ -96,14 +101,29 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 
 	const latestMessage = latestMessageQuery.data?.[latestMessageQuery.data.length - 1]
 
-	console.log(userProfiles.data)
+	const getNotiLatestMessage = (currentRoomId: string) => {
+		const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
+		if (latestMessage && latestMessage.sender_id !== userProfiles.data?.teacher?.user_id) return true
+		else return false
+	}
+
+	const removeLatestMessage = (currentRoomId: string) => {
+		const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
+		if (latestMessage && latestMessage.sender_id !== userProfiles.data?.teacher?.user_id) {
+			const index = notiLatestMessages.indexOf(latestMessage)
+			notiLatestMessages.splice(index, 1)
+		}
+	}
 
 	return (
-		<button
-			className={cn('min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
+		<div
+			className={cn(
+				'min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 cursor-pointer hover:bg-gray-100 transition-all duration-100',
+				selectedTab === index && 'border-l-4 border-orange-400'
+			)}
 			onClick={() => {
 				setSelectedTab(index)
-				// removeLatestMessage(room.room_id)
+				removeLatestMessage(room.room_id)
 			}}
 		>
 			<Avatar>
@@ -112,7 +132,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 			</Avatar>
 			<div className="flex flex-row items-center">
 				<div className="flex flex-col items-start">
-					<p className="truncate max-w-[200px]">
+					<p className="truncate max-w-[250px] font-bold">
 						{room.room_name} ({room.room_id})
 					</p>
 					<p className="text-sm">
@@ -122,8 +142,8 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 						{latestMessage?.content}
 					</p>
 				</div>
-				{/* {getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>} */}
+				{getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>}
 			</div>
-		</button>
+		</div>
 	)
 }

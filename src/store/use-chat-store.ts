@@ -43,6 +43,10 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 			// Handle incoming messages
 			const message = JSON.parse(event.data)
 			const { room_id } = message
+			// update notiLatestMessages
+			set((state) => ({
+				notiLatestMessages: [...state.notiLatestMessages, message]
+			}))
 			setTimeout(() => {
 				queryClient.invalidateQueries({ queryKey: ['chat-message', room_id] })
 				queryClient.invalidateQueries({ queryKey: ['latest-message', room_id] })
@@ -83,8 +87,6 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	updateLatestMessage: (roomId) => {
 		const { notiLatestMessages } = get()
 		const data = notiLatestMessages.filter((msg) => msg.room_id !== roomId)
-
-		console.log(data)
 
 		set(() => ({
 			notiLatestMessages: [...data]
