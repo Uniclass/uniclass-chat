@@ -24,7 +24,8 @@ export const Default: Story = {
 		// dataBaseApiUrl: 'https://uniclass-api---dev-2fce6.ondigitalocean.app',
 		// socketApiUrl: 'wss://b59xru5edg.execute-api.ap-southeast-1.amazonaws.com/HUNTER',
 		socketApiUrl: 'wss://7n99e865wb.execute-api.ap-southeast-1.amazonaws.com/dev',
-		userId: 'STA0002'
+		userId: 'TCA0002',
+		devTools: true
 		// userId: 'TCA0002'
 	}
 }
