@@ -1,11 +1,9 @@
 import { fetchChatMessage, fetchUserProfileList, sendChatMessage } from '@/common/api/chat.api'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/store/use-chat-store'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { IconAlertCircle, IconChalkboard, IconMenuDeep } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { FC, useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { FC, useCallback, useEffect, useRef } from 'react'
 import * as z from 'zod'
 import { useAppContext } from '../app-provider'
 import { ComponentMessage } from '../component-message'
@@ -17,9 +15,10 @@ import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 import { ScrollArea } from '../ui/scroll-area'
+import { useForm, zodResolver } from '@mantine/form'
 
 const formSchema = z.object({
-	message: z.string().min(1).max(50)
+	message: z.string().min(1, { message: 'ต้องมีอย่างน้อย 1 ตัวอักษร' }).max(50, { message: 'ต้องมีไม่เกิน 50 ตัวอักษร' })
 })
 
 type ChatRoomProps = {
@@ -39,19 +38,26 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 	const { socketStatus, sendSocketMessage } = useChatStore()
 	const messagesEndRef = useRef(null)
 
-	const messageQuery = useQuery({
-		queryKey: ['chat-message', roomId],
-		queryFn: () => fetchChatMessage(dataBaseApiUrl, authToken, roomId, new Date().toISOString(), '2023-12-20T09:32:13.000Z')
-	})
+	const _st_time = new Date().toISOString()
+	const _ed_time = '2023-12-20T09:32:13.000Z'
 
-	const profileQuery = useQuery({ queryKey: ['user-profile'], queryFn: () => fetchUserProfileList(dataBaseApiUrl, authToken, roomId) })
+	const fetchMessages = useCallback(() => fetchChatMessage(dataBaseApiUrl, authToken, roomId, _st_time, _ed_time), [dataBaseApiUrl, authToken, roomId, _st_time])
+	const fetchProfiles = useCallback(() => fetchUserProfileList(dataBaseApiUrl, authToken, roomId), [dataBaseApiUrl, authToken, roomId])
 
-	const messageMutation = useMutation({
-		mutationKey: ['send-message'],
-		mutationFn: async (variables: { msgData: ChatMessage; roomId: string }) => {
+	const messageQuery = useQuery({ queryKey: ['chat-message', roomId], queryFn: fetchMessages })
+	const profileQuery = useQuery({ queryKey: ['user-profile'], queryFn: fetchProfiles })
+
+	const sendMessage = useCallback(
+		async (variables: { msgData: ChatMessage; roomId: string }) => {
 			sendChatMessage(dataBaseApiUrl, authToken, variables.msgData, variables.roomId)
 			sendSocketMessage(variables.msgData)
 		},
+		[dataBaseApiUrl, authToken, sendSocketMessage]
+	)
+
+	const messageMutation = useMutation({
+		mutationKey: ['send-message'],
+		mutationFn: sendMessage,
 		onSettled: () => {
 			setTimeout(() => {
 				queryClient.invalidateQueries({ queryKey: ['chat-message', roomId] })
@@ -60,9 +66,9 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 		}
 	})
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
+	const form = useForm({
+		validate: zodResolver(formSchema),
+		initialValues: {
 			message: ''
 		}
 	})
@@ -151,34 +157,21 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 					))}
 				<div ref={messagesEndRef} />
 			</ScrollArea>
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full p-3">
-					<FormField
-						control={form.control}
-						disabled={!socketStatus || !currentRoom.room_status || messageQuery.isLoading || messageQuery.isError}
-						name="message"
-						render={({ field }) => (
-							<FormItem>
-								{/* <FormLabel>Username</FormLabel> */}
-								<FormControl>
-									<div className="flex flex-row gap-1">
-										<Input data-testid="message-input" placeholder="Aa" {...field} />
-										<Button
-											data-testid="message-submit"
-											disabled={!socketStatus || !currentRoom.room_status || messageQuery.isLoading || messageQuery.isError || messageMutation.isPending}
-											type="submit"
-											variant="outline"
-										>
-											Send
-										</Button>
-									</div>
-								</FormControl>
-								{messageMutation.isError && <FormMessage className="text-red-400">Error: {messageMutation.error.message}</FormMessage>}
-							</FormItem>
-						)}
-					/>
-				</form>
-			</Form>
+			<form onSubmit={form.onSubmit(onSubmit)} className="p-3 space-y-2">
+				<div className="flex flex-row gap-1">
+					<Input data-testid="message-input" placeholder="Aa" {...form.getInputProps('message')} />
+					<Button
+						data-testid="message-submit"
+						disabled={!socketStatus || !currentRoom.room_status || messageQuery.isLoading || messageQuery.isError || messageMutation.isPending}
+						type="submit"
+						variant="outline"
+					>
+						Send
+					</Button>
+				</div>
+				{form.errors && <div className="text-red-400">{form.getInputProps('message').error}</div>}
+				{messageMutation.isError && <div className="text-red-400">{messageMutation.error.message}</div>}
+			</form>
 		</Card>
 	)
 }
