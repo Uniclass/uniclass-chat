@@ -21,9 +21,7 @@ type ChatRoomDetailProps = {
 
 export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, setSideMenuOpen }) => {
 	const { dataBaseApiUrl, authToken } = useAppContext()
-
 	const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null)
-
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200)
 
 	useEffect(() => {
@@ -32,12 +30,15 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 				setIsMobile(true)
 				setSideMenuOpen(false)
 			} else {
-				setIsMobile(false)
 				setSideMenuOpen(true)
+				setIsMobile(false)
 			}
 		}
 
 		window.addEventListener('resize', handleResize)
+
+		// Call handleResize once to handle the initial window size
+		handleResize()
 
 		return () => {
 			window.removeEventListener('resize', handleResize)

@@ -1,4 +1,4 @@
-import { fetchChatMessage, fetchUserProfileList } from '@/common/api/chat.api'
+import { fetchChatMessage, fetchChatRoomDetail } from '@/common/api/chat.api'
 import { cn } from '@/lib/utils'
 import { Transition } from '@headlessui/react'
 import { IconX } from '@tabler/icons-react'
@@ -25,18 +25,20 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 				setIsMobile(true)
 				setRoomMenuOpen(false)
 			} else {
-				setIsMobile(false)
 				setRoomMenuOpen(true)
+				setIsMobile(false)
 			}
 		}
 
 		window.addEventListener('resize', handleResize)
 
+		// Call handleResize once to handle the initial window size
+		handleResize()
+
 		return () => {
 			window.removeEventListener('resize', handleResize)
 		}
 	}, [])
-
 	// const getNotiLatestMessage = (currentRoomId: string) => {
 	// 	const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
 	// 	if (latestMessage && latestMessage.sender_id !== userId) return true
@@ -84,7 +86,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 
 	const userProfiles = useQuery({
 		queryKey: ['user-profile', room.room_id],
-		queryFn: () => fetchUserProfileList(dataBaseApiUrl, authToken, room.room_id).then((res) => res.flat().filter((item: any) => item.teacher_id))
+		queryFn: () => fetchChatRoomDetail(dataBaseApiUrl, authToken, room.room_id)
 	})
 
 	const latestMessageQuery = useQuery({
@@ -93,6 +95,8 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 	})
 
 	const latestMessage = latestMessageQuery.data?.[latestMessageQuery.data.length - 1]
+
+	console.log(userProfiles.data)
 
 	return (
 		<button
@@ -103,8 +107,8 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 			}}
 		>
 			<Avatar>
-				<Avatar.Image src={userProfiles.data?.[index]?.photo_url} />
-				<Avatar.Fallback>{userProfiles.data?.[index]?.firstname}</Avatar.Fallback>
+				<Avatar.Image src={userProfiles.data?.teacher?.photo_url} />
+				<Avatar.Fallback>{userProfiles.data?.teacher?.firstname}</Avatar.Fallback>
 			</Avatar>
 			<div className="flex flex-row items-center">
 				<div className="flex flex-col items-start">
@@ -112,7 +116,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 						{room.room_name} ({room.room_id})
 					</p>
 					<p className="text-sm">
-						{userProfiles.data?.[index]?.firstname} {userProfiles.data?.[index]?.lastname}
+						{userProfiles.data?.teacher?.firstname} {userProfiles.data?.teacher?.lastname}
 					</p>
 					<p data-testid="latest-message" className="text-xs">
 						{latestMessage?.content}
