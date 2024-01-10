@@ -7,7 +7,7 @@ const meta: Meta<typeof ChatApp> = {
 	parameters: {
 		// layout: 'centered'
 		// layout: 'fullscreen'
-		layout: 'padded'
+		layout: 'fullscreen'
 	},
 	tags: ['autodocs']
 }
