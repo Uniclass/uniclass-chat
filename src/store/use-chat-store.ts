@@ -46,7 +46,7 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 			setTimeout(() => {
 				queryClient.invalidateQueries({ queryKey: ['chat-message', room_id] })
 				queryClient.invalidateQueries({ queryKey: ['latest-message', room_id] })
-			}, 3000)
+			}, 1000)
 		}
 
 		socket.onclose = () => {
