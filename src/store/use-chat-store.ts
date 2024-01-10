@@ -1,38 +1,31 @@
-import { fetchChatMessage, sendChatMessage, getAuthToken, fetchUserProfileList } from '@/common/api/chat.api'
+import { getAuthToken } from '@/common/api/chat.api'
+import { QueryClient } from '@tanstack/react-query'
 import { create } from 'zustand'
 
 type StoreState = {
-	rooms: Record<string, ChatMessage[]>
 	notiLatestMessages: ChatMessage[]
-	profile: RoomAttendan[]
 	socket: WebSocket | null
 	socketStatus: boolean
-	sending: boolean
 }
 
 type StoreActions = {
-	connectWebSocket: (dataBaseApiUrl: string, socketApiUrl: string, authToken: string) => void
+	connectWebSocket: (dataBaseApiUrl: string, socketApiUrl: string, authToken: string, queryClient: QueryClient) => void
 	disconnectWebSocket: () => void
-	sendMessage: (dataBaseApiUrl: string, authToken: string, data: ChatMessage, room_id: string) => void
-	// fetchChatMessage: (dataBaseApiUrl: string, authToken: string, room_id: string, ts_st: string, ts_en: string) => void
-	// fetchUserProfile: (dataBaseApiUrl: string, authToken: string, room_Id: string) => void
+	sendSocketMessage: (data: ChatMessage) => void
 	updateLatestMessage: (roomId: string) => void
 }
 
 const initialState = {
-	rooms: {},
 	notiLatestMessages: [],
-	profile: [],
 	socket: null,
-	socketStatus: false,
-	sending: false
+	socketStatus: false
 }
 
 export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	...initialState,
 
 	// Connect to WebSocket
-	connectWebSocket: async (dataBaseApiUrl, socketApiUrl, authToken) => {
+	connectWebSocket: async (dataBaseApiUrl, socketApiUrl, authToken, queryClient) => {
 		const { socketStatus } = get()
 
 		// If the WebSocket is already connected, return without doing anything
@@ -50,14 +43,10 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 			// Handle incoming messages
 			const message = JSON.parse(event.data)
 			const { room_id } = message
-
-			set((state) => ({
-				rooms: {
-					...state.rooms,
-					[room_id]: [...(state.rooms[room_id] || []), message]
-				},
-				notiLatestMessages: [...state.notiLatestMessages, message]
-			}))
+			setTimeout(() => {
+				queryClient.invalidateQueries({ queryKey: ['chat-message', room_id] })
+				queryClient.invalidateQueries({ queryKey: ['latest-message', room_id] })
+			}, 3000)
 		}
 
 		socket.onclose = () => {
@@ -80,60 +69,16 @@ export const useChatStore = create<StoreState & StoreActions>((set, get) => ({
 	},
 
 	// Send a message through WebSocket and API
-	sendMessage: async (dataBaseApiUrl, authToken, data, room_id) => {
+	sendSocketMessage: async (data) => {
 		const { socket } = useChatStore.getState()
 		if (socket && socket.readyState === WebSocket.OPEN) {
 			try {
-				// set loading state
-				set(() => ({ sending: true }))
-				await sendChatMessage(dataBaseApiUrl, authToken, data, room_id)
 				socket.send(JSON.stringify({ action: 'sendmessage', data }))
-				set(() => ({ sending: false }))
 			} catch (err) {
 				console.log(err)
-				set(() => ({ sending: false }))
 			}
 		}
 	},
-
-	// Fetch chat messages from API
-	// fetchChatMessage: async (dataBaseApiUrl, authToken, room_id, ts_st, ts_en) => {
-	// 	try {
-	// 		const message = (await fetchChatMessage(dataBaseApiUrl, authToken, room_id, ts_st, ts_en)) as ChatMessage[]
-
-	// 		set((state) => {
-	// 			const existingMessages = state.rooms[room_id] || []
-	// 			const newMessages = [...existingMessages, ...message]
-
-	// 			const uniqueMessages = newMessages.reduce((acc: ChatMessage[], current: ChatMessage) => {
-	// 				const index = acc.findIndex((msg) => msg.id === current.id) // Assuming each message has a unique 'id' property
-	// 				if (index < 0) {
-	// 					acc.push(current)
-	// 				}
-	// 				return acc
-	// 			}, [])
-
-	// 			return {
-	// 				rooms: {
-	// 					...state.rooms,
-	// 					[room_id]: uniqueMessages
-	// 				}
-	// 			}
-	// 		})
-	// 	} catch (err) {
-	// 		console.log(err)
-	// 	}
-	// },
-
-	// Fetch User Profile From API
-	// fetchUserProfile: async (dataBaseApiUrl, authToken, room_Id) => {
-	// 	try {
-	// 		const profile = await fetchUserProfileList(dataBaseApiUrl, authToken, room_Id)
-	// 		set({ profile })
-	// 	} catch (err) {
-	// 		console.log(err)
-	// 	}
-	// },
 
 	updateLatestMessage: (roomId) => {
 		const { notiLatestMessages } = get()

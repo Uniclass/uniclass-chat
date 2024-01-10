@@ -4,6 +4,7 @@ import { Transition } from '@headlessui/react'
 import { IconX } from '@tabler/icons-react'
 import { FC, Fragment, useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { useAppContext } from '../app-provider'
 import { Error } from '../error'
 import { Button } from '../ui/button'
 import { ClassSchedule } from './class-schedule'
@@ -12,14 +13,14 @@ import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
 
 type ChatRoomDetailProps = {
-	dataBaseApiUrl: string
-	authToken: string
 	roomId: string
 	sideMenuOpen: boolean
 	setSideMenuOpen: (value: boolean) => void
 }
 
-export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ dataBaseApiUrl, authToken, roomId, sideMenuOpen, setSideMenuOpen }) => {
+export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, setSideMenuOpen }) => {
+	const { dataBaseApiUrl, authToken } = useAppContext()
+
 	const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null)
 
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)

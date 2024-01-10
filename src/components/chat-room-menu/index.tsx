@@ -1,10 +1,12 @@
+import { fetchChatMessage, fetchUserProfileList } from '@/common/api/chat.api'
 import { cn } from '@/lib/utils'
-import { useChatStore } from '@/store/use-chat-store'
 import { Transition } from '@headlessui/react'
+import { IconX } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
 import { FC, Fragment, useEffect, useState } from 'react'
+import { useAppContext } from '../app-provider'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
-import { IconX } from '@tabler/icons-react'
 
 type ChatRoomMenuProps = {
 	roomMenuOpen: boolean
@@ -12,15 +14,9 @@ type ChatRoomMenuProps = {
 	chatRoom: ChatRoom[]
 	selectedTab: number
 	setSelectedTab: (index: number) => void
-	userProfiles: any[]
-	dataBaseApiUrl: string
-	authToken: string
-	userId: string
 }
 
-export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuOpen, chatRoom, selectedTab, setSelectedTab, userProfiles, userId }) => {
-	const { rooms, notiLatestMessages, updateLatestMessage } = useChatStore()
-
+export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuOpen, chatRoom, selectedTab, setSelectedTab }) => {
 	const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
 
 	useEffect(() => {
@@ -36,15 +32,11 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 		}
 	}, [])
 
-	const getNotiLatestMessage = (currentRoomId: string) => {
-		const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
-		if (latestMessage && latestMessage.sender_id !== userId) return true
-		else return false
-	}
-
-	const removeLatestMessage = (currentRoomId: string) => {
-		updateLatestMessage(currentRoomId)
-	}
+	// const getNotiLatestMessage = (currentRoomId: string) => {
+	// 	const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
+	// 	if (latestMessage && latestMessage.sender_id !== userId) return true
+	// 	else return false
+	// }
 
 	return (
 		<Transition
@@ -63,25 +55,13 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 						<IconX className="active:translate-y-[1px]" size={24} onClick={() => setRoomMenuOpen(false)} />
 					</Button>
 				)}
-				{chatRoom &&
-					chatRoom.map((room: ChatRoom, index: number) => {
-						if (!rooms[room.room_id]) return null
-						const latestMessage = rooms[room.room_id][rooms[room.room_id].length - 1]
-						return (
-							<div key={room.room_id}>
-								<ChatRoomItem
-									room={room}
-									selectedTab={selectedTab}
-									index={index}
-									setSelectedTab={setSelectedTab}
-									removeLatestMessage={removeLatestMessage}
-									userProfiles={userProfiles}
-									latestMessage={latestMessage}
-									getNotiLatestMessage={getNotiLatestMessage}
-								/>
-							</div>
-						)
-					})}
+				{chatRoom.map((room: ChatRoom, index: number) => {
+					return (
+						<div key={room.room_id}>
+							<ChatRoomItem room={room} selectedTab={selectedTab} index={index} setSelectedTab={setSelectedTab} />
+						</div>
+					)
+				})}
 			</div>
 		</Transition>
 	)
@@ -92,24 +72,34 @@ type ChatRoomItemProps = {
 	selectedTab: number
 	index: number
 	setSelectedTab: (index: number) => void
-	removeLatestMessage: (currentRoomId: string) => void
-	userProfiles: any[]
-	latestMessage: ChatMessage
-	getNotiLatestMessage: (currentRoomId: string) => boolean
 }
 
-export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab, removeLatestMessage, userProfiles, latestMessage, getNotiLatestMessage }) => {
+export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab }) => {
+	const { dataBaseApiUrl, authToken } = useAppContext()
+
+	const userProfiles = useQuery({
+		queryKey: ['user-profile', room.room_id],
+		queryFn: () => fetchUserProfileList(dataBaseApiUrl, authToken, room.room_id).then((res) => res.flat().filter((item: any) => item.teacher_id))
+	})
+
+	const latestMessageQuery = useQuery({
+		queryKey: ['latest-message', room.room_id],
+		queryFn: () => fetchChatMessage(dataBaseApiUrl, authToken, room.room_id, new Date().toISOString(), '2023-12-20T09:32:13.000Z')
+	})
+
+	const latestMessage = latestMessageQuery.data?.[latestMessageQuery.data.length - 1]
+
 	return (
 		<button
 			className={cn('min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 ', selectedTab === index ? 'border-l-4 border-orange-400 bg-gray-100/50' : 'border-white')}
 			onClick={() => {
 				setSelectedTab(index)
-				removeLatestMessage(room.room_id)
+				// removeLatestMessage(room.room_id)
 			}}
 		>
 			<Avatar>
-				<AvatarImage src={userProfiles[index]?.photo_url} />
-				<AvatarFallback>{userProfiles[index]?.firstname}</AvatarFallback>
+				<AvatarImage src={userProfiles.data?.[index]?.photo_url} />
+				<AvatarFallback>{userProfiles.data?.[index]?.firstname}</AvatarFallback>
 			</Avatar>
 			<div className="flex flex-row items-center">
 				<div className="flex flex-col items-start">
@@ -117,13 +107,13 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 						{room.room_name} ({room.room_id})
 					</p>
 					<p className="text-sm">
-						{userProfiles[index]?.firstname} {userProfiles[index]?.lastname}
+						{userProfiles.data?.[index]?.firstname} {userProfiles.data?.[index]?.lastname}
 					</p>
 					<p data-testid="latest-message" className="text-xs">
 						{latestMessage?.content}
 					</p>
 				</div>
-				{getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>}
+				{/* {getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>} */}
 			</div>
 		</button>
 	)
