@@ -42,13 +42,6 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 		queryFn: () => fetchChatMessage(dataBaseApiUrl, authToken, roomId, new Date().toISOString(), '2023-12-20T09:32:13.000Z')
 	})
 
-	const form = useForm({
-		validate: zodResolver(formSchema),
-		initialValues: {
-			message: ''
-		}
-	})
-
 	const profileQuery = useQuery({ queryKey: ['user-profile'], queryFn: () => fetchUserProfileList(dataBaseApiUrl, authToken, roomId) })
 
 	const messageMutation = useMutation({
@@ -62,6 +55,13 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 				queryClient.invalidateQueries({ queryKey: ['chat-message', roomId] })
 				queryClient.invalidateQueries({ queryKey: ['latest-message', roomId] })
 			}, 1000)
+		}
+	})
+
+	const form = useForm({
+		validate: zodResolver(formSchema),
+		initialValues: {
+			message: ''
 		}
 	})
 
@@ -112,7 +112,7 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 				<CardDescription>
 					{profileQuery.isSuccess && profileQuery.data[0]?.firstname} {profileQuery.isSuccess && profileQuery.data[0]?.lastname}
 				</CardDescription>
-				<SocketBadgeStatus socketStatus={!!socketStatus} />
+				<SocketBadgeStatus socketStatus={socketStatus} />
 			</CardHeader>
 			<IconChalkboard className="absolute cursor-pointer top-[20px] left-[20px]" onClick={() => setRoomMenuOpen(!roomMenuOpen)} />
 			<IconMenuDeep className="absolute cursor-pointer top-[20px] right-[20px]" onClick={() => setSideMenuOpen(!sideMenuOpen)} />

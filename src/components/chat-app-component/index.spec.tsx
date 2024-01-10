@@ -1,12 +1,10 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
-import { ChatApp } from '.'
+import { ChatAppComponent } from '.'
 
-describe('ChatApp', () => {
+describe('ChatAppComponent', () => {
 	it('renders without crashing', () => {
-		render(<ChatApp socketApiUrl="" dataBaseApiUrl="" authToken="" userId="" />)
-
-		// Add more specific assertions as needed
+		render(<ChatAppComponent socketApiUrl="" dataBaseApiUrl="" authToken="" userId="" />)
 		expect(screen.getByTestId('chat-app')).toBeInTheDocument()
 	})
 })
