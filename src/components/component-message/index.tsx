@@ -197,6 +197,7 @@ const ClassStartMessage: FC<ChatMessage> = ({ comp_data }) => {
 									lastname: teacherProfileQuery.data[0].profile.lastname,
 									photo_url: teacherProfileQuery.data[0].profile.photo_url
 								}}
+								roomId={comp_data_obj?.order_id}
 							/>
 						</div>
 					)}

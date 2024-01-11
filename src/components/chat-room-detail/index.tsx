@@ -87,7 +87,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 						{/* CLASS DETAIL */}
 						{/* TEACHER / STUDENT DETAIL */}
 						<ErrorBoundary fallback={<Error>มีข้อผิดพลาดเกิดขึ้น</Error>}>
-							<TeacherDetail teacher={chatRoomDetail.teacher} />
+							<TeacherDetail teacher={chatRoomDetail.teacher} roomId={roomId} />
 						</ErrorBoundary>
 						{/* <StudentDetail /> */}
 						{/* <StudentDetail student={chatRoomDetail.student} /> */}

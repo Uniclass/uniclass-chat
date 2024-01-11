@@ -117,6 +117,19 @@ const putCandidateTeacherToOrder = (dataBaseApiUrl: string, authToken: string, b
 		})
 }
 
+const changeTeacher = (dataBaseApiUrl: string, authToken: string, body: ChangeTeacher) => {
+	return axios
+		.put(`${dataBaseApiUrl}/chat/order/teacher/change`, body, {
+			headers: {
+				Authorization: `Bearer ${authToken}`
+			}
+		})
+		.then((res) => {
+			if (res.data.code === 200) return res.data.payload
+			throw new Error(res.data.message_ui || res.data.message)
+		})
+}
+
 export {
 	fetchChatRoom,
 	fetchChatMessage,
@@ -126,5 +139,6 @@ export {
 	fetchUserProfile,
 	fetchChatRoomDetail,
 	getCandidateTeacherList,
-	putCandidateTeacherToOrder
+	putCandidateTeacherToOrder,
+	changeTeacher
 }

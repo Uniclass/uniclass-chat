@@ -44,3 +44,10 @@ type Teacher = {
 	verification: null | string
 	security: Security
 }
+
+type ChangeTeacher = {
+	order_id: string
+	teacher_id: string
+	course_credit_used: number
+	remark: string
+}
