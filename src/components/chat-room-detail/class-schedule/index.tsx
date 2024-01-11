@@ -5,10 +5,11 @@ import { FC, useEffect, useState } from 'react'
 
 type ClassScheduleProps = {
 	order: ChatRoomDetail['order']
-	time?: string
+	time: string
+	googleMeetLink: string
 }
 
-export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, order_status }, time }) => {
+export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, order_status }, time, googleMeetLink }) => {
 	let classStatus
 
 	switch (order_status) {
@@ -25,6 +26,7 @@ export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, or
 			classStatus = 'เริ่มเรียน'
 			break
 	}
+
 	return (
 		<Card className="relative bg-white rounded-none w-full p-0">
 			<Card.Header className="p-3">
@@ -35,18 +37,19 @@ export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, or
 				</p>
 			</Card.Header>
 			<Card.Content className="p-3">
-				<ScheduleInfo course_name={course_name} time={time || '00:00:00'} />
+				<ScheduleInfo courseName={course_name} time={time || '00:00:00'} googleMeetLink={googleMeetLink} />
 			</Card.Content>
 		</Card>
 	)
 }
 
 type ScheduleInfoProps = {
-	course_name: string
+	courseName: string
 	time: string
+	googleMeetLink: string
 }
 
-const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name, time }) => {
+const ScheduleInfo: FC<ScheduleInfoProps> = ({ courseName, time, googleMeetLink }) => {
 	return (
 		<Card className="border-orange-200 bg-orange-100/50 p-3 flex flex-col gap-3">
 			{/* UNICLASS LOGO */}
@@ -56,13 +59,13 @@ const ScheduleInfo: FC<ScheduleInfoProps> = ({ course_name, time }) => {
 			{/* DESCRIPTION */}
 			<div className="flex flex-row gap-1">
 				<p className="text-lg font-bold">คลาส</p>
-				<p className="text-lg font-normal">{course_name.split(' ')[1]}</p>
+				<p className="text-lg font-normal">{courseName.split(' ')[1]}</p>
 				<p className="text-lg font-normal">กำลังจะเริ่มใน</p>
 			</div>
 			{/* COUNTDOWN TIME */}
 			<div className="text-indigo-500 text-2xl text-center font-bold">{Countdown(time)}</div>
 			{/* ENTER CLASS BUTTON */}
-			<Button className="w-full text-white rounded-xl bg-orange-500 hover:bg-orange-400" onClick={() => window.open('https://meet.google.com/?pli=1')}>
+			<Button className="w-full text-white rounded-xl bg-orange-500 hover:bg-orange-400" onClick={() => window.open(googleMeetLink)}>
 				<IconBook size={20} className="mr-3" />
 				เข้าห้องเรียน
 			</Button>

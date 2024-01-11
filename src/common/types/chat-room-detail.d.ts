@@ -11,7 +11,7 @@ type ChatRoomDetail = {
 		title: string
 		firstname: string
 		lastname: string
-		phone: string
+		phone?: string
 		photo_url: string
 	}
 	student: {
@@ -19,7 +19,7 @@ type ChatRoomDetail = {
 		title: string
 		firstname: string
 		lastname: string
-		phone: string
+		phone?: string
 		photo_url: string
 	}
 }

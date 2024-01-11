@@ -32,10 +32,10 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, hasButton = tru
 								{teacher?.title ? (
 									<p className="text-nowrap">{teacher.title}</p>
 								) : (
-									<>
+									<div className="flex flex-row gap-2">
 										<p>{teacher.firstname}</p>
 										<p>{teacher.lastname}</p>
-									</>
+									</div>
 								)}
 							</div>
 							<p>⭐ 4.5</p>

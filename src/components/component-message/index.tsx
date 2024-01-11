@@ -9,6 +9,7 @@ import { Button } from '../ui/button'
 import Card from '../ui/card'
 import Dialog from '../ui/dialog'
 import Avatar from '../ui/avatar'
+import { useAppContext } from '../app-provider'
 
 type ComponentMessageProps = {
 	authToken: string
@@ -21,8 +22,10 @@ export const ComponentMessage: FC<ChatMessage & ComponentMessageProps> = (messag
 			return <TeacherSelectMessage {...message} />
 		case 'order:class:start':
 			return <ClassStartMessage {...message} />
-		case 'order:teacher:evaluate':
+		case 'order:evaluate:teacher':
 			return <TeacherEvaluateMessage />
+		case 'order:evaluate:result':
+			return <EvaluateResultMessage {...message} />
 		default:
 			return <></>
 	}
@@ -148,14 +151,19 @@ const TeacherProfile: FC<Teacher & { orderId: string; dataBaseApiUrl: string; au
 }
 
 const ClassStartMessage: FC<ChatMessage> = ({ comp_data }) => {
-	const comp_data_obj = JSON.parse(comp_data || '{}')
+	const { dataBaseApiUrl, authToken } = useAppContext()
+	const teacherProfileQuery = useQuery({ queryKey: ['candidate-teacher-profile'], queryFn: () => getCandidateTeacherList(dataBaseApiUrl, authToken, comp_data_obj?.order_id) })
+
+	const comp_data_obj = JSON.parse(JSON.parse(comp_data || '{}'))
+
+	const { st_time, google_meet_link } = comp_data_obj
 
 	const date = new Date(comp_data_obj?.st_time)
 	const hours = String(date.getHours()).padStart(2, '0')
 	const minutes = String(date.getMinutes()).padStart(2, '0')
 	const time = `${hours}:${minutes}`
 
-	const countdown_time = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString()
+	const countdown_time = st_time
 
 	return (
 		<div className="flex flex-row justify-center w-full">
@@ -171,25 +179,33 @@ const ClassStartMessage: FC<ChatMessage> = ({ comp_data }) => {
 					</Card.Description>
 				</Card.Header>
 				<Card.Content className="flex flex-col gap-4 p-4">
-					<div className="flex flex-col gap-3">
-						<p className="font-bold text-xl">กับคุณครู</p>
-						<TeacherDetail
-							hasButton={false}
-							teacher={{
-								tid: 'TCA0002',
-								title: 'ครูริกโรล',
-								firstname: 'ริก',
-								lastname: 'โรลลิง',
-								phone: '+66859009804',
-								photo_url: 'https://s3.ap-southeast-1.amazonaws.com/uniclass.pub---dev/teacher/TCA0002/profile.pic'
-							}}
-						/>
-					</div>
+					{teacherProfileQuery.isLoading && <Card className="flex flex-row items-center justify-center gap-3 p-3 rounded-none bg-white">กำลังโหลดโปรไฟล์ครู...</Card>}
+					{teacherProfileQuery.isError && (
+						<Card className="flex flex-row items-center justify-center gap-3 p-3 rounded-none bg-red-100 border-red-500">
+							<IconAlertCircle /> {teacherProfileQuery.error.message}
+						</Card>
+					)}
+					{teacherProfileQuery.isSuccess && (
+						<div className="flex flex-col gap-3">
+							<p className="font-bold text-xl">กับคุณครู</p>
+							<TeacherDetail
+								hasButton={false}
+								teacher={{
+									tid: teacherProfileQuery.data[0].tid,
+									title: teacherProfileQuery.data[0].profile.title,
+									firstname: teacherProfileQuery.data[0].profile.firstname,
+									lastname: teacherProfileQuery.data[0].profile.lastname,
+									photo_url: teacherProfileQuery.data[0].profile.photo_url
+								}}
+							/>
+						</div>
+					)}
 					<div className="flex flex-col gap-3">
 						<p className="font-bold text-xl">พร้อมแล้วกดเข้าห้องได้เลย</p>
 						<ClassSchedule
 							time={countdown_time}
 							order={{ order_id: 'A012', order_id_mask: 'PpOcpS', order_status: 'A', course_id: 'MATTH06-04', course_name: 'วิชา คณิตศาสตร์ ป.3 หลักสูตร ไทย คอร์ส 6 ครั้ง' }}
+							googleMeetLink={google_meet_link}
 						/>
 					</div>
 				</Card.Content>
@@ -264,6 +280,31 @@ const TeacherEvaluateMessage = () => {
 							</Dialog.Footer>
 						</Dialog.Content>
 					</Dialog>
+				</Card.Content>
+			</Card>
+		</div>
+	)
+}
+
+const EvaluateResultMessage: FC<ChatMessage> = ({ comp_data }) => {
+	const comp_data_obj = JSON.parse(JSON.parse(comp_data || '{}'))
+	const { class_order, eval_behavior_note, eval_study_note } = comp_data_obj
+
+	return (
+		<div className="flex flex-row justify-center w-full">
+			<Card className="bg-[#ffebd9] border-none w-[400px]">
+				<Card.Header className="p-4 ">
+					<Card.Title className="text-xl">
+						<p className="text-lg">ผลการประเมิน ครั้งที่ {class_order}</p>
+					</Card.Title>
+				</Card.Header>
+				<Card.Content className="flex flex-col gap-4 px-4 ">
+					<div className="flex flex-col gap-3">
+						<p>ผลการประเมินด้านพฤติกรรม</p>
+						<div className="bg-white p-3 rounded-md shadow-lg flex flex-row gap-3 items-center">{eval_behavior_note}</div>
+						<p>ผลการประเมินด้านการเรียน</p>
+						<div className="bg-white p-3 rounded-md shadow-lg flex flex-row gap-3 items-center">{eval_study_note}</div>
+					</div>
 				</Card.Content>
 			</Card>
 		</div>
