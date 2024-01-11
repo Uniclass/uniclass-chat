@@ -5,8 +5,8 @@ import { FC, useEffect, useState } from 'react'
 
 type ClassScheduleProps = {
 	order: ChatRoomDetail['order']
-	time: string
-	googleMeetLink: string
+	time?: string
+	googleMeetLink?: string
 }
 
 export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, order_status }, time, googleMeetLink }) => {
@@ -37,7 +37,7 @@ export const ClassSchedule: FC<ClassScheduleProps> = ({ order: { course_name, or
 				</p>
 			</Card.Header>
 			<Card.Content className="p-3">
-				<ScheduleInfo courseName={course_name} time={time || '00:00:00'} googleMeetLink={googleMeetLink} />
+				<ScheduleInfo courseName={course_name} time={time || '00:00:00'} googleMeetLink={googleMeetLink || ''} />
 			</Card.Content>
 		</Card>
 	)
