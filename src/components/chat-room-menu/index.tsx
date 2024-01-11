@@ -88,6 +88,7 @@ type ChatRoomItemProps = {
 export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, setSelectedTab }) => {
 	const { notiLatestMessages } = useChatStore()
 	const { dataBaseApiUrl, authToken } = useAppContext()
+	const { userId } = useAppContext()
 
 	const userProfiles = useQuery({
 		queryKey: ['user-profile', room.room_id],
@@ -103,6 +104,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 
 	const getNotiLatestMessage = (currentRoomId: string) => {
 		const latestMessage = notiLatestMessages.find((item) => item.room_id === currentRoomId)
+		if (latestMessage?.skip_audience_type === userId.substring(0, 3)) return
 		if (latestMessage && latestMessage.sender_id !== userProfiles.data?.teacher?.user_id) return true
 		else return false
 	}
@@ -138,11 +140,15 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 					<p className="text-sm">
 						{userProfiles.data?.teacher?.firstname} {userProfiles.data?.teacher?.lastname}
 					</p>
-					<p data-testid="latest-message" className="text-xs">
-						{latestMessage?.content}
-					</p>
+					{latestMessage?.skip_audience_type !== userId.substring(0, 3) && (
+						<p data-testid="latest-message" className="text-xs">
+							{latestMessage?.content}
+						</p>
+					)}
 				</div>
-				{getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>}
+				{latestMessage?.skip_audience_type !== userId.substring(0, 3) && getNotiLatestMessage(room.room_id) && selectedTab !== index && (
+					<div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>
+				)}
 			</div>
 		</div>
 	)
