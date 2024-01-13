@@ -123,6 +123,14 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, roomId, hasButt
 									</div>
 								</div>
 							)}
+							{changeTeacherMutation.isSuccess && (
+								<div className="border-green-300 p-3 border-2 bg-green-100/50 mt-3">
+									<div className="text-green-500 flex flex-row gap-3 items-center">
+										<IconAlertTriangle size={20} />
+										ยื่นคำร้องขอเปลี่ยนครูแล้ว
+									</div>
+								</div>
+							)}
 							<Dialog.Footer className="mt-3">
 								<Dialog.Close asChild>
 									<Button
@@ -135,7 +143,7 @@ export const TeacherDetail: FC<TeacherDetailProps> = ({ teacher, roomId, hasButt
 										ยกเลิก
 									</Button>
 								</Dialog.Close>
-								<Button disabled={changeTeacherMutation.isPending} className="bg-red-500 hover:bg-red-400 w-[50%] text-white" type="submit">
+								<Button disabled={changeTeacherMutation.isPending || changeTeacherMutation.isSuccess} className="bg-red-500 hover:bg-red-400 w-[50%] text-white" type="submit">
 									ยืนยัน
 								</Button>
 							</Dialog.Footer>

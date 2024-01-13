@@ -9,7 +9,7 @@ type CourseStatusProps = {
 
 type StatusGroup = {
 	hasTeacher: boolean
-	isLearned: boolean
+	isLearning: boolean
 	isCompleted: boolean
 }
 
@@ -20,35 +20,35 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 		case 'F':
 			statusGroup = {
 				hasTeacher: false,
-				isLearned: false,
+				isLearning: false,
 				isCompleted: false
 			}
 			break
 		case 'A':
 			statusGroup = {
 				hasTeacher: true,
-				isLearned: false,
+				isLearning: false,
 				isCompleted: false
 			}
 			break
 		case 'B':
 			statusGroup = {
 				hasTeacher: true,
-				isLearned: true,
+				isLearning: true,
 				isCompleted: false
 			}
 			break
 		case 'C':
 			statusGroup = {
 				hasTeacher: true,
-				isLearned: true,
+				isLearning: true,
 				isCompleted: true
 			}
 			break
 		default:
 			statusGroup = {
 				hasTeacher: false,
-				isLearned: false,
+				isLearning: false,
 				isCompleted: false
 			}
 			break
@@ -67,13 +67,13 @@ export const CourseStatus: FC<CourseStatusProps> = ({ orderStatus }) => {
 					</div>
 					<div className="p-[1px] bg-orange-500 w-[1px] h-[20px] ml-[14px]"></div>
 					<div className="flex flex-row gap-3 items-center">
-						{statusGroup.isLearned ? <IconCircleCheckFilled size={30} className="text-orange-500" /> : <IconWashDryclean size={30} className="text-orange-500" />}
-						เรียนแล้ว
+						{statusGroup.isLearning ? <IconCircleCheckFilled size={30} className="text-orange-500" /> : <IconWashDryclean size={30} className="text-orange-500" />}
+						กำลังเรียน
 					</div>
 					<div className="p-[1px] bg-orange-500 w-[1px] h-[20px] ml-[14px]"></div>
 					<div className="flex flex-row gap-3 items-center">
 						{statusGroup.isCompleted ? <IconCircleCheckFilled size={30} className="text-orange-500" /> : <IconWashDryclean size={30} className="text-orange-500" />}
-						เสร็จแล้ว
+						เรียนเสร็จแล้ว
 					</div>
 				</div>
 				<div className="flex flex-col justify-end">

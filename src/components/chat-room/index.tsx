@@ -153,7 +153,12 @@ export const ChatRoom: FC<ChatRoomProps> = ({ roomId, currentRoom, roomMenuOpen,
 			{currentRoom.room_status === false && <div className="p-3 w-full text-center bg-gray-100">คอร์สเรียนจบแล้ว</div>}
 			<form onSubmit={form.onSubmit(onSubmit)} className="p-3 space-y-2">
 				<div className="flex flex-row gap-1">
-					<Input data-testid="message-input" placeholder="Aa" {...form.getInputProps('message')} />
+					<Input
+						disabled={!socketStatus || !currentRoom.room_status || messageQuery.isLoading || messageQuery.isError || messageMutation.isPending}
+						data-testid="message-input"
+						placeholder="Aa"
+						{...form.getInputProps('message')}
+					/>
 					<Button
 						data-testid="message-submit"
 						disabled={!socketStatus || !currentRoom.room_status || messageQuery.isLoading || messageQuery.isError || messageMutation.isPending}
