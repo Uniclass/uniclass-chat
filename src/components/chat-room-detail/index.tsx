@@ -13,6 +13,8 @@ import { CourseStatus } from './course-status'
 import { TeacherDetail } from './teacher-detail'
 import { ScrollArea } from '../ui/scroll-area'
 
+const MOBILE_BREAKPOINT = 1400
+
 type ChatRoomDetailProps = {
 	roomId: string
 	sideMenuOpen: boolean
@@ -22,11 +24,11 @@ type ChatRoomDetailProps = {
 export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, setSideMenuOpen }) => {
 	const { dataBaseApiUrl, authToken } = useAppContext()
 	const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null)
-	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200)
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= MOBILE_BREAKPOINT)
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth <= 1200) {
+			if (window.innerWidth <= MOBILE_BREAKPOINT) {
 				setIsMobile(true)
 				setSideMenuOpen(false)
 			} else {
@@ -55,16 +57,7 @@ export const ChatRoomDetail: FC<ChatRoomDetailProps> = ({ roomId, sideMenuOpen, 
 
 	return (
 		chatRoomDetail && (
-			<Transition
-				show={sideMenuOpen}
-				as={Fragment}
-				enter="transition ease-out duration-200"
-				enterFrom={cn('opacity-0', isMobile ? 'translate-x-10' : '-translate-x-10')}
-				enterTo="opacity-100 translate-x-0"
-				leave="transition ease-in duration-150"
-				leaveFrom="opacity-100 translate-x-0"
-				leaveTo={cn('opacity-0', isMobile ? 'translate-x-10' : '-translate-x-10')}
-			>
+			<Transition show={sideMenuOpen} as={Fragment} enter="transition ease-out duration-200" enterFrom={cn('opacity-0', isMobile ? 'translate-x-10' : '-translate-x-10')} enterTo="opacity-100 translate-x-0" leave="transition ease-in duration-150" leaveFrom="opacity-100 translate-x-0" leaveTo={cn('opacity-0', isMobile ? 'translate-x-10' : '-translate-x-10')}>
 				<div className={cn('bg-white', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')} onClick={() => setSideMenuOpen(false)}>
 					<ScrollArea className="min-w-[400px] h-[90vh] relative" onClick={(e) => e.stopPropagation()}>
 						{isMobile && (

@@ -10,6 +10,8 @@ import { Button } from '../ui/button'
 import { useChatStore } from '@/store/use-chat-store'
 import { ScrollArea } from '../ui/scroll-area'
 
+const MOBILE_BREAKPOINT = 1400
+
 type ChatRoomMenuProps = {
 	roomMenuOpen: boolean
 	setRoomMenuOpen: (bool: boolean) => void
@@ -19,11 +21,11 @@ type ChatRoomMenuProps = {
 }
 
 export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuOpen, chatRoom, selectedTab, setSelectedTab }) => {
-	const [isMobile, setIsMobile] = useState(window.innerWidth <= 1200)
+	const [isMobile, setIsMobile] = useState(window.innerWidth <= MOBILE_BREAKPOINT)
 
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth <= 1200) {
+			if (window.innerWidth <= MOBILE_BREAKPOINT) {
 				setIsMobile(true)
 				setRoomMenuOpen(false)
 			} else {
@@ -48,16 +50,7 @@ export const ChatRoomMenu: FC<ChatRoomMenuProps> = ({ roomMenuOpen, setRoomMenuO
 	// }
 
 	return (
-		<Transition
-			show={roomMenuOpen}
-			as={Fragment}
-			enter="transition ease-out duration-200"
-			enterFrom={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}
-			enterTo="opacity-100 translate-x-0"
-			leave="transition ease-in duration-150"
-			leaveFrom="opacity-100 translate-x-0"
-			leaveTo={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}
-		>
+		<Transition show={roomMenuOpen} as={Fragment} enter="transition ease-out duration-200" enterFrom={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')} enterTo="opacity-100 translate-x-0" leave="transition ease-in duration-150" leaveFrom="opacity-100 translate-x-0" leaveTo={cn('opacity-0', isMobile ? '-translate-x-10' : 'translate-x-10')}>
 			<div className={cn('flex flex-col  bg-white border-y border-l h-[90vh]', isMobile && 'absolute top-0 left-0 right-0 bottom-0 z-20')}>
 				<ScrollArea>
 					{isMobile && (
@@ -119,10 +112,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 
 	return (
 		<div
-			className={cn(
-				'min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 cursor-pointer hover:bg-gray-100 transition-all duration-100',
-				selectedTab === index && 'border-l-4 border-orange-400'
-			)}
+			className={cn('min-w-[300px] w-full px-4 py-2  flex flex-row gap-4 border-l-4 cursor-pointer hover:bg-gray-100 transition-all duration-100', selectedTab === index && 'border-l-4 border-orange-400')}
 			onClick={() => {
 				setSelectedTab(index)
 				removeLatestMessage(room.room_id)
@@ -146,9 +136,7 @@ export const ChatRoomItem: FC<ChatRoomItemProps> = ({ room, selectedTab, index, 
 						</p>
 					)}
 				</div>
-				{latestMessage?.skip_audience_type !== userId.substring(0, 3) && getNotiLatestMessage(room.room_id) && selectedTab !== index && (
-					<div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>
-				)}
+				{latestMessage?.skip_audience_type !== userId.substring(0, 3) && getNotiLatestMessage(room.room_id) && selectedTab !== index && <div data-testid="notification-div" className="p-1 bg-red-500 rounded-full"></div>}
 			</div>
 		</div>
 	)

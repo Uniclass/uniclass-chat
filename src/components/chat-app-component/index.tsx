@@ -7,6 +7,8 @@ import { ChatRoomDetail } from '../chat-room-detail'
 import { ChatRoomMenu } from '../chat-room-menu'
 import { Error } from '../error'
 
+const MOBILE_BREAKPOINT = 1400
+
 type ChatAppProps = {
 	socketApiUrl: string
 	dataBaseApiUrl: string
@@ -26,7 +28,7 @@ export const ChatAppComponent: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUr
 	})
 
 	// if mobile set default to false
-	const isMobile = window.innerWidth <= 1200 // Adjust the value as needed
+	const isMobile = window.innerWidth <= MOBILE_BREAKPOINT // Adjust the value as needed
 	const [roomMenuOpen, setRoomMenuOpen] = useState(!isMobile)
 	const [sideMenuOpen, setSideMenuOpen] = useState(!isMobile)
 
@@ -60,15 +62,7 @@ export const ChatAppComponent: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUr
 					return (
 						selectedTab === index && (
 							<div key={room.room_id} className="flex flex-row w-full">
-								<ChatRoom
-									currentRoom={room}
-									roomId={room.room_id}
-									socketStatus={socketStatus}
-									setRoomMenuOpen={setRoomMenuOpen}
-									roomMenuOpen={roomMenuOpen}
-									sideMenuOpen={sideMenuOpen}
-									setSideMenuOpen={setSideMenuOpen}
-								/>
+								<ChatRoom currentRoom={room} roomId={room.room_id} socketStatus={socketStatus} setRoomMenuOpen={setRoomMenuOpen} roomMenuOpen={roomMenuOpen} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
 								<ChatRoomDetail roomId={room.room_id} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} />
 							</div>
 						)
