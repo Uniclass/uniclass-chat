@@ -44,10 +44,18 @@ export const ChatAppComponent: FC<ChatAppProps> = ({ socketApiUrl, dataBaseApiUr
 			}
 		}
 
+		function handleUserInteraction() {
+			connectWebSocket(dataBaseApiUrl, socketApiUrl, authToken, queryClient)
+		}
+
 		document.addEventListener('visibilitychange', handleVisibilityChange)
+		document.addEventListener('mousemove', handleUserInteraction)
+		document.addEventListener('keydown', handleUserInteraction)
 
 		return () => {
 			document.removeEventListener('visibilitychange', handleVisibilityChange)
+			document.removeEventListener('mousemove', handleUserInteraction)
+			document.removeEventListener('keydown', handleUserInteraction)
 		}
 	}, [connectWebSocket, socketApiUrl, dataBaseApiUrl, authToken, disconnectWebSocket, queryClient])
 
